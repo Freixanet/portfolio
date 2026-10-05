@@ -1002,8 +1002,11 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
     words.forEach(function (group) {
       if (!group.length || !group[0].offsetParent) return;
       var box = group[0].parentNode.getBoundingClientRect();
-      if (box.top + y < vh * .85) { if (!group.done) { group.forEach(function (w) { w.style.setProperty('--w', 1); }); group.done = true; } return; }
-      var prog = clamp((vh * .85 - box.top) / (box.height + vh * .3));
+      // Lighting starts when the text enters the lower part of the screen. Text already on screen when its view
+      // opens starts from where it stands instead, so it opens fully unlit and still lights up as you scroll.
+      var start = Math.min(vh * .85, box.top + y);
+      var span = Math.max(vh * .25, Math.min(box.height + vh * .3, start - vh * .15));
+      var prog = clamp((start - box.top) / span);
       var lit = prog * (group.length + 4);
       group.forEach(function (w, i) { w.style.setProperty('--w', (0.2 + 0.8 * clamp(lit - i)).toFixed(2)); });
     });
