@@ -217,6 +217,11 @@
   var caseView = document.getElementById('case');
   var caseIds = ['alice', 'como'];
   var homeY = 0, pendingFocus = null;
+  function jump(el) {                                     // instant version of goTo, for links that open a view
+    if (el.id === 'contacto') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
+    else el.scrollIntoView({ behavior: 'instant' });
+    if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true });
+  }
   function moveFocus() {                                  // keyboard focus follows the view, once it is on screen
     if (pendingFocus) { pendingFocus.focus({ preventScroll: true }); pendingFocus = null; }
   }
@@ -228,7 +233,7 @@
     home.hidden = inCase; caseView.hidden = !inCase; caseView.classList.toggle('open', inCase);
     document.title = inCase ? 'Alice — Marc Freixanet' : 'Marc Freixanet';
     if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
-    if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) { t.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true }); } }
+    if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) jump(t); }
     if (!inCase && wasCase && !h) {                       // browser Back: the index at the point you left it
       window.scrollTo(0, homeY); if (window.__lenis) window.__lenis.scrollTo(homeY, { immediate: true });
       pendingFocus = document.querySelector('a.project.feature');
@@ -253,6 +258,12 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   function clearHash() { history.replaceState(null, '', location.pathname + location.search); }
   function goTo(el) {
+    // Contact is the last section: go to the very end, so its footer (name, year, preferences) is on screen too
+    if (el.id === 'contacto') {
+      var end = document.documentElement.scrollHeight - window.innerHeight;
+      if (window.__lenis) window.__lenis.scrollTo(end); else window.scrollTo({ top: end, behavior: reduce ? 'auto' : 'smooth' });
+      return;
+    }
     if (window.__lenis) window.__lenis.scrollTo(el, { offset: -56 });
     else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }
@@ -278,7 +289,7 @@
   var homeTarget = startHash && caseIds.indexOf(startHash) === -1 ? document.getElementById(startHash) : null;
   if (homeTarget && isReload) { clearHash(); homeTarget = null; }
   function toTop() {
-    if (homeTarget) { homeTarget.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(homeTarget, { offset: -56, immediate: true }); if (window.__showInView) window.__showInView(); return; }
+    if (homeTarget) { jump(homeTarget); if (window.__showInView) window.__showInView(); return; }
     window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
   }
   toTop();
