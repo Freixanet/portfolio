@@ -1,5 +1,8 @@
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 
+/* Fonts served from this site: no visitor data goes to a font service. Latin subset, SIL OFL (fonts/OFL.txt). */
+@font-face { font-family: "Geist"; font-style: normal; font-weight: 400 600; font-display: swap; src: url(fonts/geist-latin.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/geist-mono-latin.woff2) format("woff2"); }
 /* Layout: one 12-column grid. Everything starts on column 1 or column 7 (the half),
    so every section shares the same two vertical lines. 8-point spacing, one type scale. */
 :root {
@@ -294,6 +297,7 @@ section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
 /* Keyboard: every control shows where focus is, in both themes and on the contact panel */
 a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
 a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
+h1[tabindex="-1"]:focus { outline: none; }
 .chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
 .contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
 /* Coarse pointers (fingers) get a little more room between neighbouring controls */
@@ -356,8 +360,8 @@ footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid va
 .story { margin-top: var(--s7); }
 .step { min-block-size: 90vh; display: flex; flex-direction: column; justify-content: center; gap: var(--s4); }
 .step:first-child { min-block-size: 75vh; justify-content: flex-start; padding-top: 18vh; }
-.step h3 { font-family: var(--display); font-size: var(--t-h2); line-height: 1; letter-spacing: -.025em; max-inline-size: 9em; }
-.step h3 em { color: var(--muted); }
+.step h2 { font-family: var(--display); font-size: var(--t-h2); line-height: 1; letter-spacing: -.025em; max-inline-size: 9em; }
+.step h2 em { color: var(--muted); }
 .step p { color: var(--muted); max-inline-size: 26em; }
 .step p b { color: var(--fg); font-weight: 500; }
 .step .inline-phone { display: none; }
@@ -493,7 +497,7 @@ nav a.here { color: var(--fg); }
 .dots { display: flex; gap: 8px; }
 .dots i { width: 7px; height: 7px; border-radius: 999px; background: var(--muted); opacity: .4; transition: width .5s var(--ease), opacity .3s; }
 .dots i.on { width: 22px; opacity: 1; background: var(--fg); }
-.step h3, .step p, .step .label { transition: opacity .5s ease; }
+.step h2, .step p, .step .label { transition: opacity .5s ease; }
 .motion .story .step:not(.on) h3, .motion .story .step:not(.on) p { opacity: .28; }
 
 /* Page change: Alice's name travels from the card to the case title */

@@ -1,0 +1,1345 @@
+<title>Marc Freixanet</title>
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preload" href="fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Fonts served from this site: no visitor data goes to a font service. Latin subset, SIL OFL (fonts/OFL.txt). */
+@font-face { font-family: "Geist"; font-style: normal; font-weight: 400 600; font-display: swap; src: url(fonts/geist-latin.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/geist-mono-latin.woff2) format("woff2"); }
+/* Layout: one 12-column grid. Everything starts on column 1 or column 7 (the half),
+   so every section shares the same two vertical lines. 8-point spacing, one type scale. */
+:root {
+  --bg: #f2f2f2;
+  --surface: #e6e6e6;
+  --fg: #000000;
+  --muted: #626262;
+  --line: #d4d4d4;
+  --giant: #8a8a8a;
+  --phone: #1b1b19;
+
+  --display: "Geist", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --body: "Geist", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* type scale */
+  --t-label: 0.75rem;
+  --t-small: 0.875rem;
+  --t-body: 1.0625rem;
+  --t-lead: clamp(1.1875rem, 1.6vw, 1.375rem);
+  --t-h3: clamp(1.75rem, 2.6vw, 2.25rem);
+  --t-h2: clamp(2.5rem, 5vw, 4rem);
+  --t-h1: clamp(3.25rem, 8.4vw, 7.5rem);
+  --t-xl: clamp(5.5rem, 15vw, 13.5rem);
+
+  /* 8-point spacing */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  --s7: 48px; --s8: 64px; --s9: 96px; --s10: 128px;
+  --section: clamp(80px, 10vw, 144px);
+  --gutter: clamp(20px, 5vw, 64px);
+  --col-gap: 24px;
+
+  --r-lg: 28px;
+  --r-md: 16px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000; --surface: #151515; --fg: #f2f2f2; --muted: #8c8c8c; --line: #262626; --phone: #2c2c2c; --giant: #5e5e5e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #000000; --surface: #151515; --fg: #f2f2f2; --muted: #8c8c8c; --line: #262626; --phone: #2c2c2c; --giant: #5e5e5e;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+/* iPhone: take the base size from the system so Larger Text in Settings scales the whole page (rem units) */
+@supports (-webkit-touch-callout: none) and (font: -apple-system-body) { html { font: -apple-system-body; } }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--body); font-size: var(--t-body); line-height: 1.45; letter-spacing: -.01em; font-weight: 420;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4, p, dl, dd { margin: 0; }
+h1, h2, h3, h4 { font-weight: 500; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--fg); color: var(--bg); }
+html { accent-color: var(--fg); caret-color: var(--fg); scrollbar-color: color-mix(in srgb, var(--fg) 25%, transparent) transparent; }
+.ul { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); transition: text-decoration-color .2s; }
+@media (hover: hover) { .ul:hover { text-decoration-color: currentColor; } }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
+em { font-style: normal; }
+
+.wrap { max-inline-size: 1240px; margin-inline: auto; padding-inline: var(--gutter); container: page / inline-size; }
+.grid12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+.left { grid-column: 1 / 7; min-inline-size: 0; }
+.right { grid-column: 7 / 13; min-inline-size: 0; }
+
+/* Shared text roles */
+.label { font-size: var(--t-small); line-height: 1.4; color: var(--muted); font-variant-numeric: tabular-nums; }
+.display { font-family: var(--display); line-height: 1; letter-spacing: -.025em; }
+.muted { color: var(--muted); }
+.lead { font-size: var(--t-lead); line-height: 1.45; color: var(--muted); max-inline-size: 34em; }
+
+/* Sections: one rhythm everywhere */
+.section { padding-block: var(--section); }
+.head { align-items: last baseline; row-gap: var(--s4); margin-bottom: var(--s8); }
+.head h2 { font-family: var(--display); font-size: var(--t-h2); line-height: 1; letter-spacing: -.025em; }
+
+.head p { color: var(--muted); max-inline-size: 30em; }
+
+/* Mockup note + header */
+.note { font-size: var(--t-label); color: var(--muted); text-align: center; padding: var(--s3) var(--gutter); border-bottom: 1px solid var(--line); }
+header.top {
+  position: sticky; inset-block-start: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px);
+}
+header.top .wrap { height: 56px; display: flex; justify-content: space-between; align-items: center; gap: var(--s4); }
+.name { font-size: var(--t-small); font-weight: 500; white-space: nowrap; }
+nav { display: flex; gap: var(--s5); font-size: var(--t-small); }
+nav a { color: var(--muted); transition: color .2s; }
+@media (hover: hover) { nav a:hover { color: var(--fg); } }
+
+/* Intro */
+.intro { padding-block: var(--s10) var(--section); row-gap: var(--s7); }
+.intro h1 { grid-column: 1 / 11; font-family: var(--display); font-size: var(--t-h1); line-height: .95; letter-spacing: -.025em; }
+.intro h1 em { color: var(--muted); display: block; }
+.intro .lead { grid-column: 7 / 13; }
+
+/* The signal: one hairline that rests calm and quickens while you interact */
+.signal { grid-column: 1 / -1; display: block; width: 100%; height: 112px; margin-block: calc(var(--s5) * -1); }
+.motion .signal { animation: rise 1.4s var(--ease) .45s both; }
+
+/* Lenis (smooth scroll on desktop, as on ndstudio.gov, TrumpRx, Real Food and NASA Force) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* Buttons and pills: 44pt targets */
+.btn {
+  height: 44px; display: inline-flex; align-items: center; gap: var(--s2); padding-inline: 20px;
+  border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg);
+  font: 500 0.9375rem/1 var(--body); cursor: pointer; transition: border-color .2s, transform .12s var(--ease);
+}
+@media (hover: hover) { .btn:hover { border-color: var(--fg); } }
+.btn:active { transform: scale(.97); }
+.btn.solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.pill { font-size: var(--t-label); color: var(--muted); border: 1px dashed currentColor; border-radius: 999px; padding: var(--s1) var(--s3); }
+
+/* Frames (project images) */
+.frame { position: relative; border-radius: var(--r-lg); background: var(--surface); overflow: hidden; transition: transform .6s var(--ease); }
+@media (hover: hover) { a.project:hover .frame:not([data-expand]) { transform: scale(.99); } }
+a.project:active .frame { transform: scale(.98); transition-duration: .12s; }
+
+/* Featured project */
+.feature { display: grid; gap: var(--s5); }
+.shots { aspect-ratio: 16 / 9; display: flex; justify-content: center; align-items: flex-end; gap: var(--s6); padding-top: var(--s8); }
+.shots img { width: 21%; border-radius: 28px 28px 0 0; box-shadow: 0 24px 48px -24px rgba(0,0,0,.3); transition: transform .7s var(--ease); }
+@media (hover: hover) { a.project:hover .shots img { transform: translateY(-2%); } }
+.feature .meta { row-gap: var(--s4); }
+.pname { font-family: var(--display); font-size: var(--t-h3); line-height: 1.05; letter-spacing: -.01em; }
+.pdesc { color: var(--muted); max-inline-size: 30em; }
+.prow { display: flex; justify-content: space-between; gap: var(--s4); margin-top: var(--s4); }
+.prow .go { color: var(--fg); }
+
+/* Other projects: two columns on the half line */
+.cards { margin-top: var(--s9); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s9) var(--col-gap); }
+.card { display: grid; gap: var(--s5); align-content: start; min-inline-size: 0; }
+.card .text { display: grid; gap: var(--s2); }
+.type { aspect-ratio: 3 / 2; display: grid; place-items: center; align-content: center; gap: var(--s3); }
+.type .fx { font-family: var(--display); font-size: clamp(2.75rem, 5.6vw, 4.5rem); line-height: 1; letter-spacing: -.02em; }
+.type .pill { position: absolute; inset-block-end: var(--s5); inset-inline-start: 50%; translate: -50% 0; white-space: nowrap; }
+
+
+/* Project index: a typographic list, rows on the two half lines */
+.index { margin-top: var(--s10); }
+.index-title { font-family: var(--display); font-size: var(--t-h3); line-height: 1.05; margin-bottom: var(--s5); }
+.row-p { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); row-gap: var(--s2); align-items: baseline; padding-block: var(--s5); border-top: 1px solid var(--line); }
+.row-p:last-of-type { border-bottom: 1px solid var(--line); }
+.row-p h4 { grid-column: 1 / 7; font-family: var(--display); font-size: clamp(2rem, 3.4vw, 2.75rem); line-height: 1; letter-spacing: -.025em; }
+.row-p p { grid-column: 7 / 11; color: var(--muted); }
+.row-p .label { grid-column: 11 / 13; justify-self: end; text-align: end; }
+.index-note { margin-top: var(--s5); }
+
+
+/* ——— After the National Design Studio ———
+   One neo-grotesk, grey ground, a giant word in pale grey, statements set big on the half line,
+   and sections opened by a rule, a roman numeral and a small label. */
+.giant { font-family: var(--display); font-weight: 500; font-size: clamp(3rem, 17.2vw, 13.375rem); line-height: .9; letter-spacing: -.045em; color: var(--giant); }
+.big { font-size: clamp(1.5rem, 3vw, 2.75rem); line-height: 1.1; letter-spacing: -.025em; font-weight: 450; text-wrap: pretty; max-inline-size: 22em; }
+.intro { padding-block: var(--s9) var(--section); }
+.intro .giant { margin-inline-start: -.04em; font-size: clamp(2.875rem, 8.9vw, 7.625rem); line-height: .92; letter-spacing: -.045em; color: var(--fg); max-inline-size: none; }
+/* On phones the headline stacks one word per line, so each word is set to fill the full measure */
+.side-row { margin-top: var(--s5); row-gap: var(--s5); align-items: start; }
+.side { grid-column: 1 / 7; font-size: var(--t-small); line-height: 1.35; padding-top: .55em; }
+.marker { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); align-items: baseline; border-top: 1px solid var(--line); padding-top: var(--s4); margin-bottom: var(--s9); font-size: var(--t-small); }
+.marker .num { grid-column: 1 / 2; font-variant-numeric: lining-nums; }
+.marker h2 { grid-column: 2 / 7; font-size: var(--t-small); font-weight: 500; letter-spacing: -.005em; }
+.marker .aside { grid-column: 7 / 13; color: var(--muted); }
+.contact .marker { border-top-color: color-mix(in srgb, var(--cfg) 18%, transparent); }
+.contact-big { font-size: clamp(2.5rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.035em; font-weight: 500; }
+sup { font-size: .62em; line-height: 0; vertical-align: .55em; margin-inline-start: .08em; }
+.fn { color: var(--muted); text-decoration: none; }
+@media (hover: hover) { .fn:hover { color: var(--fg); } }
+.notes { margin: var(--s9) 0 0; padding: var(--s4) 0 0; border-top: 1px solid var(--line); list-style: none; counter-reset: n; font-size: var(--t-small); color: var(--muted); }
+.notes li { counter-increment: n; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+.notes li::before { content: counter(n); grid-column: 1 / 2; }
+.notes li { text-indent: 0; }
+.notes .nt { grid-column: 7 / 13; }
+.mark { vertical-align: -1px; margin-inline-end: 10px; }
+header.top .wrap { display: grid; grid-template-columns: 1fr auto 1fr; }
+header.top nav { justify-self: center; }
+.cta { justify-self: end; font-size: var(--t-small); font-weight: 500; white-space: nowrap; }
+.tile .text { order: 0; }
+.case-hero .giant { font-size: clamp(5.5rem, 18vw, 16.25rem); line-height: .82; }
+.case-hero .sub .big { font-size: clamp(1.375rem, 2.4vw, 2rem); color: var(--fg); }
+
+
+/* Chapter pill: where you are, and the way to the other sections */
+header.top .chapter { justify-self: center; display: inline-flex; align-items: center; gap: var(--s3); height: 32px; padding: 0 6px 0 14px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.chapter-name { font-size: 0.8125rem; font-weight: 500; min-inline-size: 6.5em; transition: opacity .25s; }
+.chapter-name.swap { opacity: 0; }
+.chapter-dots { display: inline-flex; gap: 2px; }
+.chapter-dots a { display: grid; place-items: center; width: 18px; height: 24px; }
+.chapter-dots a::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: var(--fg); opacity: .25; transition: opacity .3s, width .45s var(--ease); }
+.chapter-dots a.on::before { opacity: 1; width: 14px; }
+@media (hover: hover) { .chapter-dots a:hover::before { opacity: .6; } }
+.chapter-dots a.on { width: 26px; }
+.chapter-dots a::after { display: none; }
+
+/* Cinematic frame */
+.cine { background: #0b0b0b; }
+.play { position: absolute; z-index: 2; inset-block-start: 50%; inset-inline-start: 50%; translate: -50% -50%; display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 6px 0 18px; border-radius: 999px; background: rgba(40, 40, 40, .72); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); color: #f2f2f2; font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }
+.play i { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; background: #f2f2f2; color: #0b0b0b; padding-inline-start: 2px; }
+.cine img { opacity: .92; }
+
+/* Figures */
+.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--s6) var(--col-gap); margin-bottom: var(--s9); }
+.figures div { display: grid; gap: var(--s2); align-content: start; }
+.figures b { font-size: clamp(3.5rem, 8vw, 7rem); line-height: .9; letter-spacing: -.05em; font-weight: 500; font-variant-numeric: tabular-nums; }
+.figures span { font-size: var(--t-small); color: var(--muted); max-inline-size: 18em; }
+
+
+/* Layers at two speeds, after Uri O'Callaghan: the Alice frame drifts a little slower than the page,
+   so it rises from under the section above and slips under the one below. Nothing is pinned. */
+.over-layer { position: relative; z-index: 2; background: var(--bg); }
+.marker.over-layer { margin-bottom: 0; padding-bottom: var(--s9); }
+.feature .frame[data-lag] { position: relative; z-index: 1; transition: none; }
+.under-frame { padding-top: var(--s5); margin-top: calc(var(--s5) * -1); padding-bottom: var(--s10); }
+.index.over-layer { margin-top: 0; }
+[data-lag] { will-change: transform; }
+
+
+/* Language and theme: one quiet line in the footer, the way Apple places its region link.
+   The current choice carries the same small dot as the chapter indicator. */
+.foot { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: var(--s4) var(--s6); }
+.prefs { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s2) var(--s7); }
+.pref { display: flex; align-items: baseline; gap: var(--s4); }
+.pref-k { color: color-mix(in srgb, var(--cfg) 66%, transparent); }
+.pref button { position: relative; border: 0; background: none; min-block-size: 44px; padding: 0 2px; font: inherit; color: color-mix(in srgb, var(--cfg) 68%, transparent); cursor: pointer; transition: color .25s; }
+@media (hover: hover) { .pref button:hover { color: var(--cfg); } }
+.pref button[aria-pressed="true"] { color: var(--cfg); }
+.pref button::before { content: ""; position: absolute; inset-inline-start: 50%; inset-block-end: -3px; width: 4px; height: 4px; margin-inline-start: -2px; border-radius: 999px; background: currentColor; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease); }
+.pref button[aria-pressed="true"]::before { opacity: 1; transform: none; }
+.pref button:focus-visible { outline: 2px solid var(--cfg); outline-offset: 3px; border-radius: 4px; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .4s; }
+@container page (width < 54rem) {
+  .foot { grid-template-columns: 1fr auto; }
+  .prefs { grid-column: 1 / -1; grid-row: 1; justify-content: flex-start; flex-direction: column; gap: var(--s3); margin-bottom: var(--s4); }
+}
+
+
+/* ——— Inclusion ———
+   Touch targets of at least 44 px without changing how things look; a skip link;
+   solid surfaces for people who ask for less transparency; stronger text for more contrast. */
+.skip { position: absolute; inset-inline-start: var(--gutter); inset-block-start: -100px; z-index: 50; padding: 12px 18px; border-radius: 999px; background: var(--fg); color: var(--bg); font-size: var(--t-small); font-weight: 500; }
+.skip:focus { inset-block-start: calc(env(safe-area-inset-top, 0px) + 8px); }
+.chapter-dots a { width: 28px; height: 44px; }
+.chapter-dots a.on { width: 36px; }
+header.top .chapter { height: 44px; }
+.name, .cta { display: inline-flex; align-items: center; min-block-size: 44px; }
+.crumbs a { display: inline-flex; align-items: center; min-block-size: 44px; }
+.fn { position: relative; }
+.fn::after { content: ""; position: absolute; inset: -17px -20px; }
+.prow .go { display: inline-flex; align-items: center; min-block-size: 44px; margin-block: -12px; }
+@media (prefers-reduced-transparency: reduce) {
+  header.top { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .play { background: #282828; backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  :root { --muted: #4a4a4a; --line: #9a9a9a; }
+  :root[data-theme="dark"] { --muted: #b5b5b5; --line: #5a5a5a; }
+  .pref button, .pref-k, .contact .label { color: var(--cfg); }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --muted: #b5b5b5; --line: #5a5a5a; }
+}
+
+
+section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
+
+/* Detalles shows real material: app screens and code from the repositories */
+.tiles .tile .frame.shot { aspect-ratio: 1 / 1; overflow: hidden; display: block; }
+.tile .frame.shot::before, .tile .frame.code::before { display: none; }
+.mini { position: absolute; inset-inline-start: 50%; inset-block-start: 9%; width: 58%; translate: -50% 0; }
+.mini .phone { width: 100%; box-shadow: 0 30px 60px -30px rgba(0,0,0,.35); }
+.mini .screen { position: absolute; inset: 0; opacity: 1; transform: none; }
+.mini .ui .cursor { display: none; }
+.tiles .tile .frame.code { aspect-ratio: 1 / 1; display: block; container-type: inline-size; background: #0d0d0d; color: #e8e8e8; overflow: hidden; }
+.tile .frame.code pre { margin: 0; padding: var(--s5); font: 400 clamp(0.625rem, (100cqi - 48px) / 26, 0.8125rem)/1.6 var(--mono); white-space: pre; overflow: hidden; height: 100%;
+  -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); }
+.tile .frame.code .c { color: #8c8c8c; }
+.tile .frame.code .file { position: absolute; inset-inline-start: var(--s5); inset-block-end: var(--s4); font: 400 0.75rem/1 var(--mono); color: #a3a3a3; }
+
+
+/* Keyboard: every control shows where focus is, in both themes and on the contact panel */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
+a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
+h1[tabindex="-1"]:focus { outline: none; }
+.chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
+.contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
+/* Coarse pointers (fingers) get a little more room between neighbouring controls */
+@media (pointer: coarse) {
+  .actions { gap: var(--s4); }
+  .prefs { gap: var(--s4) var(--s7); }
+  .pref { gap: var(--s5); }
+}
+/* Progressive enhancement: without JavaScript the Alice case reads as a section below the index,
+   the indicator falls back to plain links, and controls that need scripting are not shown. */
+.js #case:not(.open) { display: none; }
+html:not(.js) #case { border-block-start: 1px solid var(--line); }
+html:not(.js) .pref, html:not(.js) #copy, html:not(.js) .crumbs { display: none; }
+html:not(.js) .chapter-name { display: none; }
+
+/* Craft */
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); column-gap: var(--col-gap); row-gap: 0; }
+.tile { margin-bottom: var(--s7); }
+.tile { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: var(--s3); min-inline-size: 0; }
+.tile .text { align-self: end; }
+.tile .frame { aspect-ratio: 1 / 1; display: grid; place-items: center; }
+.tile .frame::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 35%, color-mix(in srgb, var(--bg) 50%, transparent) 50%, transparent 65%);
+  background-size: 250% 100%; animation: sheen 4s ease-in-out infinite;
+}
+.tile .pill { position: relative; }
+.tile .text { display: grid; gap: var(--s1); }
+.tile h3 { font-size: 0.9375rem; font-weight: 500; line-height: 1.35; }
+.tile .frame { border-radius: var(--r-md); }
+@keyframes sheen { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+
+/* About */
+.facts { display: grid; }
+.facts div { display: grid; grid-template-columns: 8em minmax(0, 1fr); gap: var(--s4); padding-block: var(--s4); border-bottom: 1px solid var(--line); align-items: baseline; }
+.facts div:first-child { border-top: 1px solid var(--line); }
+.slot { color: var(--muted); border: 1px dashed var(--muted); border-radius: 16px; padding: var(--s4) var(--s5); margin-bottom: var(--s7); }
+
+/* Contact */
+
+.contact h2 em { color: var(--muted); display: block; }
+.contact .actions { display: flex; flex-wrap: wrap; gap: var(--s3); align-self: end; }
+.mail { height: 44px; display: inline-flex; align-items: center; padding-inline: 20px; border-radius: 999px; background: var(--surface); font-family: var(--mono); font-size: var(--t-small); user-select: all; }
+footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: var(--s4); }
+
+/* ——— Case view ——— */
+.crumbs { display: flex; justify-content: space-between; padding-block: var(--s5); }
+.crumbs a { font-size: var(--t-small); color: var(--muted); transition: color .2s; }
+@media (hover: hover) { .crumbs a:hover { color: var(--fg); } }
+.case-hero { padding-block: var(--s9) var(--s8); }
+.case-hero .row { display: flex; justify-content: space-between; gap: var(--s4); }
+.case-hero h1 { font-family: var(--display); font-size: var(--t-xl); line-height: .85; letter-spacing: -.03em; }
+.case-hero .sub { margin-top: var(--s5); row-gap: var(--s5); }
+.case-hero .sub p.display { font-size: var(--t-h3); font-style: italic; color: var(--muted); }
+.stack { display: grid; gap: var(--s2); }
+.stack div { display: flex; justify-content: space-between; gap: var(--s4); padding-bottom: var(--s2); border-bottom: 1px solid var(--line); font-size: var(--t-small); }
+.stack div span:last-child { color: var(--muted); }
+
+/* Scroll story: text on the left half, sticky phone on the right half */
+.story { margin-top: var(--s7); }
+.step { min-block-size: 90vh; display: flex; flex-direction: column; justify-content: center; gap: var(--s4); }
+.step:first-child { min-block-size: 75vh; justify-content: flex-start; padding-top: 18vh; }
+.step h2 { font-family: var(--display); font-size: var(--t-h2); line-height: 1; letter-spacing: -.025em; max-inline-size: 9em; }
+.step h2 em { color: var(--muted); }
+.step p { color: var(--muted); max-inline-size: 26em; }
+.step p b { color: var(--fg); font-weight: 500; }
+.step .inline-phone { display: none; }
+.stage-inner { position: sticky; inset-block-start: calc(env(safe-area-inset-top, 0px) + 56px); height: calc(100vh - 56px); display: grid; place-items: center; }
+
+/* iPhone */
+.phone {
+  width: 100%; aspect-ratio: 1206 / 2622; border-radius: 52px; padding: 10px; background: var(--phone); position: relative;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 12%, transparent), 0 40px 80px -32px rgba(0,0,0,.35);
+}
+.phone::after { content: ""; position: absolute; inset-block-start: 21px; inset-inline-start: 50%; translate: -50% 0; width: 30%; height: 3.4%; background: #000; border-radius: 20px; z-index: 3; }
+.screen-set { position: relative; width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #f3f2ee; }
+.screen { position: absolute; inset: 0; opacity: 0; transform: scale(1.02); transition: opacity .5s ease, transform .6s var(--ease); }
+.screen.on { opacity: 1; transform: none; }
+.screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Hand-built app screens, drawn after the real app */
+.ui { color: #161614; font-family: -apple-system, "SF Pro Text", var(--body); font-size: 12px; letter-spacing: 0; height: 100%; display: flex; flex-direction: column; padding: 54px 12px 14px; gap: 10px; background: #f3f2ee; }
+.ui .bar { display: flex; justify-content: space-between; align-items: center; }
+.ui .dot { width: 34px; height: 34px; border-radius: 50%; background: #fbfaf6; box-shadow: 0 2px 8px rgba(0,0,0,.06); display: grid; place-items: center; font-size: 13px; }
+.ui .me { align-self: flex-end; background: #e4e2dc; border-radius: 18px 18px 6px 18px; padding: 9px 12px; max-width: 80%; line-height: 1.35; }
+.ui .her { line-height: 1.45; max-width: 92%; }
+.ui .live { border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.ui .live .url { display: flex; justify-content: space-between; padding: 7px 10px; font-size: 10px; color: #6f6e68; border-bottom: 1px solid #eceae4; }
+.ui .live .url i { font-style: normal; color: #2f7d4f; }
+.ui .live .url i::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 5px; animation: pulse 1.6s infinite; }
+.ui .live .page { padding: 10px; display: grid; gap: 7px; }
+.ui .row { display: flex; justify-content: space-between; align-items: center; padding: 8px 9px; border: 1px solid #eceae4; border-radius: 10px; font-size: 11px; }
+.ui .row.sel { border-color: #161614; }
+.ui .row b { font-weight: 600; }
+.ui .hint { text-align: center; font-size: 10px; color: #8d8b84; padding: 6px 0 9px; }
+.ui .cursor { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: rgba(22,22,20,.18); border: 1.5px solid #161614; animation: tap 3.2s infinite; }
+.ui .card { background: #fbfaf6; border-radius: 20px; padding: 14px; display: grid; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.07); }
+.ui .card .line { display: flex; justify-content: space-between; font-size: 11.5px; color: #6f6e68; }
+.ui .card .line b { color: #161614; font-weight: 500; }
+.ui .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #eceae4; padding-top: 10px; }
+.ui .total b { font-size: 22px; font-weight: 600; letter-spacing: -.02em; }
+.ui .pay { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
+.ui .pay span { text-align: center; border-radius: 999px; padding: 10px; font-weight: 500; }
+.ui .pay .no { background: #e9e7e1; }
+.ui .pay .yes { background: #161614; color: #fbfaf6; }
+.ui .composer { margin-top: auto; background: #fbfaf6; border-radius: 22px; padding: 12px 14px; color: #a3a19a; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+@keyframes pulse { 50% { opacity: .35; } }
+@keyframes tap { 0%, 40% { opacity: 0; transform: translate(150px, 210px) scale(1.4); } 55% { opacity: 1; transform: translate(150px, 210px) scale(1); } 70% { transform: translate(150px, 210px) scale(.8); } 100% { opacity: 0; transform: translate(150px, 210px) scale(1); } }
+
+/* Case study: four blocks on the two half lines */
+.facts4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--s8) var(--col-gap); }
+.facts4 > div { display: grid; gap: var(--s3); align-content: start; min-inline-size: 0; }
+.facts4 h3 { font-size: var(--t-body); font-weight: 500; }
+.facts4 p, .facts4 li { max-inline-size: 30em; }
+.facts4 ul { margin: 0; padding-inline-start: 1.1em; display: grid; gap: var(--s2); }
+.facts4 li::marker { color: var(--muted); }
+.links { margin-top: var(--s8); display: flex; flex-wrap: wrap; gap: var(--s3); }
+
+/* Architecture: three layers on columns 1, 5 and 9 */
+.layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--col-gap); }
+.layer { display: flex; flex-direction: column; gap: var(--s3); min-inline-size: 0; padding-top: var(--s5); border-top: 1px solid var(--fg); }
+.layer .label { display: flex; justify-content: space-between; gap: var(--s2); }
+.layer h3 { font-family: var(--display); font-size: var(--t-h3); line-height: 1.05; letter-spacing: -.01em; }
+.layer .tech { font-size: var(--t-small); color: var(--muted); }
+.layer p:last-child { margin-top: var(--s2); font-size: 0.9375rem; }
+
+
+/* ——— Motion ———
+   Scroll-linked, so every effect follows the finger and reverses with it.
+   JS writes a progress --p (0→1) on each element; CSS turns it into motion.
+   With reduced motion, --p stays at 1 and nothing moves. */
+@keyframes rise { from { opacity: 0; transform: translateY(.4em); filter: blur(12px); } }
+@keyframes ink { from { color: var(--giant); } }
+@keyframes appear { from { opacity: 0; } }
+.motion .intro .giant.ln { animation: ink 1.8s cubic-bezier(.215, .61, .355, 1) .1s both; }
+.motion .intro .side.ln, .motion .intro .big.ln { animation: appear 1.2s cubic-bezier(.215, .61, .355, 1) both; }
+.motion .intro .side.ln { animation-delay: .5s; }
+.motion .intro .big.ln { animation-delay: .6s; }
+.intro h1 { transform-origin: 0 100%; }
+
+/* Reveals, after Apple and the National Design Studio: each element plays once as it comes into view,
+   with a short travel, a fast exponential ease-out and nothing but transform and opacity.
+   Anything already on screen when the page opens is shown as is. */
+:root { --reveal: cubic-bezier(.16, 1, .3, 1); }
+.reveal-now [data-r], .reveal-now [data-r] > *, .reveal-now [data-r]::before { transition: none !important; }
+.motion [data-r]:not(.in) { transition: none; }
+.motion [data-r] { transition: opacity .7s var(--reveal), transform .9s var(--reveal); transition-delay: var(--delay, 0ms); }
+.motion [data-r="text"]:not(.in) { opacity: 0; transform: translate3d(0, 14px, 0); }
+.motion [data-r="frame"] { transition-duration: 1s, 1.4s; }
+.motion [data-r="frame"]:not(.in) { opacity: 0; transform: scale(1.04); }
+[data-r="mask"] { overflow: hidden; padding-bottom: .08em; }
+[data-r="mask"] > span { display: inline-block; transition: transform .9s var(--reveal); transition-delay: var(--delay, 0ms); }
+.motion [data-r="mask"]:not(.in) > span { transform: translate3d(0, 105%, 0); }
+.marker[data-r="rule"] { border-top-color: transparent; position: relative; }
+.marker[data-r="rule"]::before { content: ""; position: absolute; inset-inline: 0; inset-block-start: -1px; height: 1px; background: var(--line); transform-origin: 0 50%; transition: transform 1.1s var(--reveal); }
+.contact .marker[data-r="rule"]::before { background: color-mix(in srgb, var(--cfg) 18%, transparent); }
+.motion .marker[data-r="rule"]:not(.in)::before { transform: scaleX(0); }
+.marker[data-r="rule"] > * { transition: opacity .6s var(--reveal) .25s, transform .8s var(--reveal) .25s; }
+.motion .marker[data-r="rule"]:not(.in) > * { opacity: 0; transform: translate3d(0, 8px, 0); }
+.motion .marker[data-r="rule"] { transform: none; opacity: 1; }
+
+/* Featured frame widens to full width as it arrives; phones drift at two speeds */
+.motion [data-expand] { clip-path: inset(0 calc((1 - var(--p, 1)) * 7%) round var(--r-lg)); }
+.motion .shots img.par { transform: translate3d(0, calc((1 - var(--p, 1)) * var(--speed) * 1%), 0); filter: blur(calc((1 - var(--p, 1)) * 6px)); transition: none; }
+@media (hover: hover) { a.project:hover .shots img { transform: none; } }
+
+/* Header: a hairline appears only once content scrolls under it; the current section is named */
+header.top { border-bottom: 1px solid transparent; transition: border-color .3s; }
+header.top.scrolled { border-bottom-color: var(--line); }
+nav a { position: relative; }
+nav a::after { content: ""; position: absolute; inset-inline: 0; inset-block-end: -6px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
+nav a.here { color: var(--fg); }
+@media (hover: hover) { nav a.here::after, nav a:hover::after { transform: scaleX(1); } }
+
+/* Contact: an inverted panel rises over the page like a curtain, corners flattening as it lands */
+.contact {
+  --cbg: var(--fg); --cfg: var(--bg);
+  background: var(--cbg); color: var(--cfg);
+  padding-block: var(--section) var(--s6);
+  border-radius: calc((1 - var(--p, 1)) * 48px) calc((1 - var(--p, 1)) * 48px) 0 0;
+  margin-inline: calc((1 - var(--p, 1)) * var(--gutter));
+}
+.contact .label { color: color-mix(in srgb, var(--cfg) 68%, transparent); }
+.contact .btn { color: var(--cfg); border-color: color-mix(in srgb, var(--cfg) 22%, transparent); }
+@media (hover: hover) { .contact .btn:hover { border-color: var(--cfg); } }
+.contact .mail { background: color-mix(in srgb, var(--cfg) 10%, transparent); }
+.contact footer { border-top-color: color-mix(in srgb, var(--cfg) 16%, transparent); }
+.contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
+
+/* Case: a statement that lights up word by word as you read */
+.statement { padding-block: var(--s8) var(--s9); }
+.words { font-family: var(--display); font-size: var(--t-h2); line-height: 1.08; letter-spacing: -.025em; max-inline-size: 18em; }
+[data-lit] span { opacity: var(--w, 1); transition: opacity .2s linear; }
+
+/* Story: the phone settles into place; an iOS page control follows the steps */
+.device { width: min(320px, 100%, calc((100vh - 170px) * 1206 / 2622)); display: grid; justify-items: center; gap: var(--s5); transform: translate3d(0, calc((1 - var(--p, 1)) * 60px), 0) scale(calc(.9 + var(--p, 1) * .1)); }
+.dots { display: flex; gap: 8px; }
+.dots i { width: 7px; height: 7px; border-radius: 999px; background: var(--muted); opacity: .4; transition: width .5s var(--ease), opacity .3s; }
+.dots i.on { width: 22px; opacity: 1; background: var(--fg); }
+.step h2, .step p, .step .label { transition: opacity .5s ease; }
+.motion .story .step:not(.on) h3, .motion .story .step:not(.on) p { opacity: .28; }
+
+/* Page change: Alice's name travels from the card to the case title */
+.vt-title { view-transition-name: alice-title; }
+::view-transition-group(alice-title) { animation-duration: .7s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }
+
+/* Breakpoints come from the content: two half-columns need about 26rem of text each,
+   so below 54rem of container width they stack. Grids above size themselves (auto-fit). */
+@container page (width < 54rem) {
+  .left, .right, .side, .grid12 > .left, .grid12 > .right { grid-column: 1 / -1; }
+  .marker .num { grid-column: 1 / 3; }
+  .marker h2 { grid-column: 3 / -1; }
+  .marker .aside { grid-column: 3 / -1; margin-top: var(--s2); }
+  .marker { margin-bottom: var(--s7); }
+  .notes .nt { grid-column: 3 / -1; }
+  .notes li::before { grid-column: 1 / 3; }
+  .chapter-name { min-inline-size: 0; }
+  .play { height: 38px; font-size: 0.75rem; }
+  .play i { width: 28px; height: 28px; }
+  .signal { height: 72px; margin-block: 0; }
+  .shots { aspect-ratio: 4 / 3; gap: var(--s4); padding-top: var(--s6); }
+  .shots img { width: 36%; border-radius: 22px 22px 0 0; }
+  .row-p h4, .row-p p, .row-p .label { grid-column: 1 / -1; justify-self: start; text-align: start; }
+  .stage { display: none; }
+  .step, .step:first-child { min-block-size: 0; padding-block: var(--s7); }
+  .step .inline-phone { display: block; margin-top: var(--s4); }
+  .step .inline-phone .phone { width: min(280px, 100%); margin-inline: auto; }
+  .step .inline-phone .screen { opacity: 1; transform: none; }
+  .motion .story .step:not(.on) h3, .motion .story .step:not(.on) p { opacity: 1; }
+}
+/* The headline keeps two lines while its size can follow the width; once it reaches its
+   smallest size (about 32rem of container) it sets one word per line instead. */
+@container page (width < 32rem) { .intro .giant { font-size: 15cqi; line-height: .92; } }
+@container page (width < 26rem) { .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); } }
+/* The header drops the name when the pill and the action need the row */
+@container page (width < 28rem) { .name .nm { display: none; } }
+@media (width < 54rem) {
+  .intro { padding-top: var(--s9); }
+  .head { margin-bottom: var(--s7); }
+  .contact { margin-inline: calc((1 - var(--p, 1)) * 12px); }
+  .device { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: opacity .2s ease !important; transform: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+
+
+<a class="skip" href="#trabajo">Saltar al contenido</a>
+<header class="top">
+  <div class="wrap">
+    <a class="name" href="#top"><svg class="mark" width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><path d="M1 6c2.2 0 2.2-4.6 4.4-4.6S7.6 10.6 9.8 10.6 12 1.4 14.2 1.4s2.2 4.6 4.4 4.6H21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nm">Marc Freixanet</span></a>
+    <nav class="chapter" aria-label="Secciones" data-aria-t>
+      <span class="chapter-name" id="chapterName" aria-live="polite">Inicio</span>
+      <span class="chapter-dots" id="chapterDots"><a href="#trabajo" aria-label="Trabajo"></a><a href="#detalles" aria-label="Detalles"></a><a href="#sobre-mi" aria-label="Sobre mí"></a><a href="#contacto" aria-label="Contacto"></a></span>
+    </nav>
+    <a class="cta ul" href="#contacto" data-sec="contacto">Escríbeme</a>
+  </div>
+</header>
+
+<main id="top">
+  <div id="home">
+    <section class="intro wrap" id="intro">
+      <h1 class="giant ln">Construyo productos completos.</h1>
+      <canvas class="signal" id="signal" aria-hidden="true"></canvas>
+      <div class="side-row grid12">
+        <p class="side ln">Swift, TypeScript<br>y Python</p>
+        <p class="big right ln" data-lit>Apps de iPhone, webs, y los servidores y agentes que hay detrás. Desde Barcelona.</p>
+      </div>
+    </section>
+
+    <section id="trabajo" class="section wrap">
+      <div class="marker over-layer" data-r="rule">
+        <span class="num">I</span>
+        <h2>Trabajo</h2>
+        <p class="aside">Cinco proyectos. El primero lo uso cada día.<sup><a href="#nota-1" class="fn">1</a></sup></p>
+      </div>
+
+      <a class="project feature" href="#alice">
+        <div class="frame shots cine" data-expand data-lag=".12">
+          <span class="play" aria-hidden="true"><span class="play-label">Demo en vídeo, pendiente</span><i><svg width="10" height="12" viewBox="0 0 10 12"><path d="M1 1.2v9.6c0 .6.6.9 1.1.6l7.4-4.8c.5-.3.5-.9 0-1.2L2.1.6C1.6.3 1 .6 1 1.2Z" fill="currentColor"/></svg></i></span>
+          <img class="par" data-speed="10" alt="Alice: inicio del chat" src="data:image/jpeg;base64,{{CHAT}}">
+          <img class="par" data-speed="18" alt="Alice: menú lateral" src="data:image/jpeg;base64,{{NAV}}">
+        </div>
+        <div class="meta grid12 over-layer under-frame">
+          <h3 class="pname left vt-title">Alice</h3>
+          <div class="right">
+            <p class="pdesc">Un agente personal que manejas desde el iPhone y que trabaja en tu propio Mac. Busca, rellena y compra, y se para antes de pagar.</p>
+            <div class="prow label"><span>iPhone, web y agentes</span><span class="go ul">Ver el caso</span></div>
+          </div>
+        </div>
+      </a>
+
+      <div class="index over-layer">
+        <h3 class="index-title">Más proyectos</h3>
+        <div class="row-p">
+          <h4>Lexia</h4>
+          <p>Chat legal para España que quita tus datos personales del texto en el navegador, antes de enviarlo.</p>
+          <span class="label">Web con IA</span>
+        </div>
+        <div class="row-p">
+          <h4>Claridad</h4>
+          <p>Un escáner de documentos pensado para sentirse tranquilo. Prototipo con cada decisión documentada.</p>
+          <span class="label">App de iPhone</span>
+        </div>
+        <div class="row-p">
+          <h4>Enyarte</h4>
+          <p>La web de una pintora: un catálogo para vender obra y un modo que cuenta su historia, en dos idiomas.</p>
+          <span class="label">Web para un cliente</span>
+        </div>
+        <div class="row-p">
+          <h4>Action Maps</h4>
+          <p>Convierte notas, vídeos de YouTube o PDFs en una idea central y unos pocos pasos con tiempo.</p>
+          <span class="label">App móvil con IA</span>
+        </div>
+        <p class="index-note"><span class="pill">casos en preparación</span></p>
+      </div>
+    </section>
+
+    <section id="detalles" class="section wrap">
+      <div class="marker" data-r="rule">
+        <span class="num">II</span>
+        <h2>Detalles</h2>
+        <p class="aside">Piezas pequeñas de varios proyectos que muestran cómo trabajo: pantallas y código real.</p>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="text"><h3>El navegador, en el chat</h3><span class="label">Alice</span></div><div class="frame shot" data-r="frame"><div class="mini" aria-hidden="true"><div class="phone"><div class="screen-set"><div class="screen on"><div class="ui">
+              <div class="bar"><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 4.5h10M2 9.5h10" stroke="#161614" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3.5 4 10.5M10 3.5 9 10.5" stroke="#161614" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+              <div class="me">Búscame vuelos a Palma el 12 de octubre por menos de 100&nbsp;€</div>
+              <div class="her">Estoy en la web de la aerolínea. Hay tres por debajo de 100&nbsp;€:</div>
+              <div class="live">
+                <div class="url"><span>aerolinea.com/vuelos</span><i>En directo</i></div>
+                <div class="page">
+                  <div class="row"><span>07:05 → 07:55</span><b>48&nbsp;€</b></div>
+                  <div class="row sel"><span>11:40 → 12:30</span><b>62&nbsp;€</b></div>
+                  <div class="row"><span>19:15 → 20:05</span><b>89&nbsp;€</b></div>
+                </div>
+                <div class="hint">Toca para tomar el control</div>
+              </div>
+              <span class="cursor"></span>
+              <div class="composer">Habla con Alice…</div>
+            </div></div></div></div></div></div></div>
+        <div class="tile"><div class="text"><h3>Anonimizar antes de enviar</h3><span class="label">Lexia</span></div><div class="frame code" data-r="frame"><pre><code>const DOC_PLACEHOLDER = &#x27;[documento]&#x27;;
+
+<span class="c">/** Patrones que revelan un DNI/NIF. */</span>
+const DOC_PATTERNS = [
+  /\b(DNI|NIF|NIE):\s*[A-Z0-9\-]{4,}/gi,
+  /\bmi (DNI|NIF|NIE) es\s+[A-Z0-9\-]{4,}/gi,
+];
+
+text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">src/utils/pseudonymize.ts</span></div></div>
+        <div class="tile"><div class="text"><h3>La tarjeta, fuera del chat</h3><span class="label">Alice</span></div><div class="frame shot" data-r="frame"><div class="mini" aria-hidden="true"><div class="phone"><div class="screen-set"><div class="screen on"><div class="ui">
+              <div class="bar"><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 4.5h10M2 9.5h10" stroke="#161614" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3.5 4 10.5M10 3.5 9 10.5" stroke="#161614" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+              <div class="her">Todo listo. Con el código <b>OTONO10</b> baja 7,60&nbsp;€.</div>
+              <div class="card">
+                <div class="line"><span>Tienda</span><b>tienda.es</b></div>
+                <div class="line"><span>Envío</span><b>Mañana, a casa</b></div>
+                <div class="line"><span>Tarjeta</span><b>Visa&nbsp;···4242</b></div>
+                <div class="total"><span>Total</span><b>68,40&nbsp;€</b></div>
+                <div class="pay"><span class="no">Ahora no</span><span class="yes">Pagar</span></div>
+              </div>
+              <div class="her" style="color:#8d8b84;font-size:11px">Alice pagará en esta web con tu Visa&nbsp;···4242.</div>
+              <div class="composer">Habla con Alice…</div>
+            </div></div></div></div></div></div></div>
+        <div class="tile"><div class="text"><h3>Nunca pagar dos veces</h3><span class="label">Alice</span></div><div class="frame code" data-r="frame"><pre><code>def _guard_repeat_payment(tool_name, args,
+                          session_id=&quot;&quot;, **_):
+<span class="c">    &quot;&quot;&quot;One payment per order: an unsettled</span>
+<span class="c">    payment on the same shop blocks it.&quot;&quot;&quot;</span>
+    meta = _card_fill(tool_name, args)
+    if meta is None:
+        return None
+    site = _purchases().merchant(
+        _open_tabs(), meta.origin or &quot;&quot;,
+        PAYMENT_GATEWAYS)
+    return _purchases().guard(
+        _hermes_root(), site, session_id)</code></pre><span class="file">hermes-plugin/__init__.py</span></div></div>
+      </div>
+    </section>
+
+    <section id="sobre-mi" class="section wrap">
+      <div class="marker" data-r="rule">
+        <span class="num">III</span>
+        <h2>Sobre mí</h2>
+      </div>
+      <div class="grid12">
+      <div class="right">
+        <p class="slot">Hueco: dos o tres frases tuyas. Qué te mueve, cómo trabajas y qué equipo buscas.</p>
+        <dl class="facts">
+          <div><dt class="label">Lenguajes</dt><dd>Swift, TypeScript, Python</dd></div>
+          <div><dt class="label">Hago</dt><dd>Apps de iPhone, webs, servidores y agentes</dd></div>
+          <div><dt class="label">Base</dt><dd>Barcelona, o en remoto</dd></div>
+        </dl>
+      </div>
+      </div>
+      <ol class="notes" aria-label="Notas" data-aria-t>
+        <li id="nota-1"><span class="nt">Con mi propio Hermes, en mi iPhone y en mi Mac.</span></li>
+      </ol>
+    </section>
+
+    <section id="contacto" class="contact" data-curtain>
+    <div class="wrap">
+      <div class="marker" data-r="rule"><span class="num">IV</span><h2>Contacto</h2></div>
+      <div class="grid12" style="row-gap:var(--s7)">
+        <p class="contact-big left">¿Hacemos algo juntos?</p>
+        <div class="right actions">
+          <span class="mail" id="mail">hola@tudominio.com</span>
+          <button class="btn" id="copy" type="button">Copiar</button>
+          <a class="btn" href="https://github.com/Freixanet">GitHub</a>
+          <a class="btn" href="https://www.linkedin.com/">LinkedIn</a>
+        </div>
+      </div>
+      <footer class="label foot">
+        <span>Marc Freixanet, Barcelona</span>
+        <div class="prefs">
+          <div class="pref" role="group" aria-label="Idioma" data-aria-t>
+            <span class="pref-k">Idioma</span>
+            <button type="button" data-lang="ca" lang="ca">Català</button>
+            <button type="button" data-lang="es" lang="es">Español</button>
+            <button type="button" data-lang="en" lang="en">English</button>
+          </div>
+          <div class="pref" role="group" aria-label="Tema" data-aria-t>
+            <span class="pref-k">Tema</span>
+            <button type="button" data-theme-set="light">Claro</button>
+            <button type="button" data-theme-set="dark">Oscuro</button>
+          </div>
+        </div>
+        <span>2026</span>
+      </footer>
+    </div>
+    </section>
+  </div>
+
+  <div id="case">
+    <div class="wrap crumbs"><a href="#trabajo" class="ul">Volver al trabajo</a><a href="#contacto" class="ul">Contacto</a></div>
+
+    <section id="alice" class="wrap case-hero">
+      <h1 class="vt-title giant">Alice.</h1>
+      <div class="sub grid12">
+        <p class="left big">Tu propio agente, en el iPhone.</p>
+        <div class="right stack">
+          <div><span>iPhone</span><span>Swift y SwiftUI</span></div>
+          <div><span>Web</span><span>React y TypeScript</span></div>
+          <div><span>Servidor y agentes</span><span>Python</span></div>
+          <div><span>Estado</span><span>En uso diario</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap statement">
+      <p class="words" data-lit>En el móvil, un agente vive dentro de un bot de mensajería. Sirve para preguntas. Pero cuando compra, inicia sesión o necesita tu permiso a mitad de tarea, hace falta otra cosa: ver lo que hace, y decidir tú.</p>
+    </section>
+
+    <section class="wrap">
+      <div class="story grid12" id="story">
+        <div class="left">
+          <article class="step" data-screen="0">
+            <h2>Le pides algo. Como a una persona.</h2>
+            <p>Un chat nativo con respuestas en directo, adjuntos y una voz que puedes interrumpir hablando. <b>Una cosa cada vez.</b></p>
+            <div class="inline-phone"></div>
+          </article>
+          <article class="step" data-screen="1">
+            <h2>Ves lo que hace. Mientras lo hace.</h2>
+            <p>La página en la que está el agente aparece en el chat, en directo. <b>La tocas y tomas el control;</b> al acabar, se la devuelves.</p>
+            <div class="inline-phone"></div>
+          </article>
+          <article class="step" data-screen="2">
+            <h2>Paga cuando tú dices «Pagar».</h2>
+            <p>Llena el carrito, la dirección y el envío, prueba los códigos de descuento y se para antes de pagar. <b>La tarjeta nunca pasa por el chat.</b></p>
+            <div class="inline-phone"></div>
+          </article>
+          <article class="step" data-screen="3">
+            <h2>Agentes, notas, rutinas. A un gesto.</h2>
+            <p>Resumen de mañana y de noche, agenda, objetivos que se miden solos y avisos al llegar a un sitio, sin compartir dónde estás.</p>
+            <div class="inline-phone"></div>
+          </article>
+        </div>
+        <div class="right stage" aria-hidden="true">
+          <div class="stage-inner">
+            <div class="device" id="device"><div class="phone"><div class="screen-set" id="screens">
+              <div class="screen on"><img alt="" src="data:image/jpeg;base64,{{CHAT}}"></div>
+              {{UI}}
+              <div class="screen"><img alt="" src="data:image/jpeg;base64,{{NAV}}"></div>
+            </div></div>
+            <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="historia">
+      <div class="marker" data-r="rule">
+        <span class="num">I</span>
+        <h2>La historia</h2>
+        <p class="aside">Por qué existe, qué decidí y qué me costó.</p>
+      </div>
+      <div class="facts4">
+        <div>
+          <h3>El problema</h3>
+          <p>Hermes es un agente abierto muy capaz, pero en el móvil se usa a través de un bot de mensajería. Sirve para preguntas. Se queda corto cuando el agente compra, inicia sesión en una web o necesita tu permiso a mitad de tarea.</p>
+        </div>
+        <div>
+          <h3>Las decisiones</h3>
+          <ul>
+            <li>App nativa en SwiftUI, no una web dentro de una app.</li>
+            <li>Ningún secreto en el chat: contraseñas, códigos y tarjetas van por hojas seguras a tu Mac.</li>
+            <li>Un paso irreversible, como pagar, espera un «Pagar» explícito.</li>
+            <li>Hermes oficial, sin parches: lo que falta va en un plugin propio.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Lo difícil</h3>
+          <p>Comprar de verdad. Cada tienda es distinta y el pago pasa por la página del banco. Alice distingue un pago confirmado de uno rechazado o sin confirmar, y bloquea un segundo pago en la misma tienda hasta saber qué pasó con el primero.</p>
+        </div>
+        <div>
+          <h3>Dónde está hoy</h3>
+          <p>La uso cada día para el chat, la agenda, los objetivos y los resúmenes. Las compras llegan hasta el pago y ya han destapado errores reales que he corregido. Todavía no la dejaría comprar sin supervisión.</p>
+        </div>
+      </div>
+      <div class="links">
+        <a class="btn solid" href="https://github.com/Freixanet/alice">Ver el código</a>
+        <a class="btn" href="#como">Cómo está hecha</a>
+      </div>
+    </section>
+
+    <section id="como" class="section wrap">
+      <div class="marker" data-r="rule">
+        <span class="num">II</span>
+        <h2>Cómo está hecha</h2>
+        <p class="aside">Tres capas, de punta a punta. Una decisión importante en cada una.</p>
+      </div>
+            <div class="figures">
+        <div><b data-count="400">400</b><span>archivos de Swift en la app de iPhone</span></div>
+        <div><b data-count="240">240</b><span>archivos de TypeScript en la web</span></div>
+        <div><b data-count="150">150</b><span>archivos de Python en el servidor y los agentes</span></div>
+      </div>
+      <div class="layers">
+        <div class="layer">
+          <h3>iPhone y web</h3>
+          <p class="tech">Swift y TypeScript, unos 640 archivos</p>
+          <p>Contraseñas, códigos y tarjetas se escriben en hojas seguras que van directas a tu Mac. El chat solo sabe que se guardaron.</p>
+        </div>
+        <div class="layer">
+          <h3>Hermes en tu Mac</h3>
+          <p class="tech">Python, unos 150 archivos</p>
+          <p>Hermes oficial, sin parches; lo que falta va en un plugin propio. Un registro de pagos impide cobrar dos veces en la misma tienda.</p>
+        </div>
+        <div class="layer">
+          <h3>Agentes y modelo</h3>
+          <p class="tech">Un modelo juez y evaluaciones</p>
+          <p>Un segundo modelo hace de juez: devuelve al agente al trabajo si se para, y solo acepta «hecho» con una prueba.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap crumbs" style="padding-bottom:var(--s9)"><a href="#trabajo" class="ul">Volver al trabajo</a><a href="#contacto" class="ul">Contacto</a></div>
+  </div>
+</main>
+
+<script src="vendor/lenis-1.3.26.min.js"></script>
+<script>
+(function () {
+  var set = document.getElementById('screens');
+  var screens = Array.prototype.slice.call(set.children);
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+
+  // On narrow screens each step carries its own phone.
+  steps.forEach(function (step, i) {
+    var phone = document.createElement('div');
+    phone.className = 'phone';
+    var inner = document.createElement('div');
+    inner.className = 'screen-set';
+    var s = screens[i].cloneNode(true);
+    s.classList.add('on');
+    inner.appendChild(s);
+    phone.appendChild(inner);
+    step.querySelector('.inline-phone').appendChild(phone);
+  });
+
+
+  // ——— Motion ———
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+  if (!reduce) root.classList.add('motion');
+  var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+
+
+  // ——— Languages: Catalan, Spanish, English. Spanish is the source text in the page. ———
+  var I18N = {"Escríbeme": {"ca": "Escriu-me", "en": "Get in touch"}, "Inicio": {"ca": "Inici", "en": "Home"}, "Trabajo": {"ca": "Feina", "en": "Work"}, "Detalles": {"ca": "Detalls", "en": "Details"}, "Sobre mí": {"ca": "Sobre mi", "en": "About"}, "Contacto": {"ca": "Contacte", "en": "Contact"}, "La historia": {"ca": "La història", "en": "The story"}, "Cómo está hecha": {"ca": "Com està feta", "en": "How it’s built"}, "Construyo productos completos.": {"ca": "Construeixo productes complets.", "en": "I build complete products."}, "Swift, TypeScript<br>y Python": {"ca": "Swift, TypeScript<br>i Python", "en": "Swift, TypeScript<br>and Python"}, "Apps de iPhone, webs, y los servidores y agentes que hay detrás. Desde Barcelona.": {"ca": "Apps d’iPhone, webs, i els servidors i agents que hi ha al darrere. Des de Barcelona.", "en": "iPhone apps, websites, and the servers and agents behind them. From Barcelona."}, "Cinco proyectos. El primero lo uso cada día.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>": {"ca": "Cinc projectes. El primer el faig servir cada dia.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>", "en": "Five projects. I use the first one every day.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>"}, "Demo en vídeo, pendiente": {"ca": "Demo en vídeo, pendent", "en": "Video demo, coming soon"}, "Un agente personal que manejas desde el iPhone y que trabaja en tu propio Mac. Busca, rellena y compra, y se para antes de pagar.": {"ca": "Un agent personal que fas servir des de l’iPhone i que treballa al teu propi Mac. Busca, omple i compra, i s’atura abans de pagar.", "en": "A personal agent you run from your iPhone that works on your own Mac. It searches, fills in and buys, and stops before paying."}, "iPhone, web y agentes": {"ca": "iPhone, web i agents", "en": "iPhone, web and agents"}, "Ver el caso": {"ca": "Veure el cas", "en": "See the case"}, "Más proyectos": {"ca": "Més projectes", "en": "More projects"}, "Chat legal para España que quita tus datos personales del texto en el navegador, antes de enviarlo.": {"ca": "Xat legal per a Espanya que treu les teves dades personals del text al navegador, abans d’enviar-lo.", "en": "A legal chat for Spain that strips your personal data from the text in the browser, before sending it."}, "Web con IA": {"ca": "Web amb IA", "en": "Web with AI"}, "Un escáner de documentos pensado para sentirse tranquilo. Prototipo con cada decisión documentada.": {"ca": "Un escàner de documents pensat per sentir-se tranquil. Prototip amb cada decisió documentada.", "en": "A document scanner designed to feel calm. A prototype with every decision documented."}, "App de iPhone": {"ca": "App d’iPhone", "en": "iPhone app"}, "La web de una pintora: un catálogo para vender obra y un modo que cuenta su historia, en dos idiomas.": {"ca": "La web d’una pintora: un catàleg per vendre obra i un mode que explica la seva història, en dos idiomes.", "en": "A painter’s website: a catalogue to sell her work and a mode that tells her story, in two languages."}, "Web para un cliente": {"ca": "Web per a un client", "en": "Client website"}, "Convierte notas, vídeos de YouTube o PDFs en una idea central y unos pocos pasos con tiempo.": {"ca": "Converteix notes, vídeos de YouTube o PDF en una idea central i uns quants passos amb temps.", "en": "Turns notes, YouTube videos or PDFs into one core idea and a few timed steps."}, "App móvil con IA": {"ca": "App mòbil amb IA", "en": "Mobile app with AI"}, "casos en preparación": {"ca": "casos en preparació", "en": "case studies in progress"}, "Piezas pequeñas de varios proyectos que muestran cómo trabajo.": {"ca": "Peces petites de diversos projectes que mostren com treballo.", "en": "Small pieces from several projects that show how I work."}, "El navegador, en el chat": {"ca": "El navegador, al xat", "en": "The browser, in the chat"}, "Anonimizar antes de enviar": {"ca": "Anonimitzar abans d’enviar", "en": "Anonymise before sending"}, "Dos modos, una web": {"ca": "Dos modes, una web", "en": "Two modes, one site"}, "Un juez que exige pruebas": {"ca": "Un jutge que exigeix proves", "en": "A judge that demands proof"}, "La tarjeta, fuera del chat": {"ca": "La targeta, fora del xat", "en": "The card, out of the chat"}, "De un PDF a tres pasos": {"ca": "D’un PDF a tres passos", "en": "From a PDF to three steps"}, "vídeo de 6&nbsp;s": {"ca": "vídeo de 6&nbsp;s", "en": "6&nbsp;s video"}, "vídeo de 8&nbsp;s": {"ca": "vídeo de 8&nbsp;s", "en": "8&nbsp;s video"}, "vídeo de 5&nbsp;s": {"ca": "vídeo de 5&nbsp;s", "en": "5&nbsp;s video"}, "código": {"ca": "codi", "en": "code"}, "Hueco: dos o tres frases tuyas. Qué te mueve, cómo trabajas y qué equipo buscas.": {"ca": "Espai reservat: dues o tres frases teves. Què et mou, com treballes i quin equip busques.", "en": "Placeholder: two or three sentences of yours. What drives you, how you work and what team you’re after."}, "Lenguajes": {"ca": "Llenguatges", "en": "Languages"}, "Hago": {"ca": "Faig", "en": "I make"}, "Base": {"ca": "Base", "en": "Based in"}, "Apps de iPhone, webs, servidores y agentes": {"ca": "Apps d’iPhone, webs, servidors i agents", "en": "iPhone apps, websites, servers and agents"}, "Barcelona, o en remoto": {"ca": "Barcelona, o en remot", "en": "Barcelona, or remote"}, "Con mi propio Hermes, en mi iPhone y en mi Mac.": {"ca": "Amb el meu propi Hermes, al meu iPhone i al meu Mac.", "en": "With my own Hermes, on my iPhone and my Mac."}, "¿Hacemos algo juntos?": {"ca": "Fem alguna cosa junts?", "en": "Shall we build something?"}, "Copiar": {"ca": "Copia", "en": "Copy"}, "Copiado": {"ca": "Copiat", "en": "Copied"}, "Idioma": {"ca": "Idioma", "en": "Language"}, "Tema": {"ca": "Tema", "en": "Theme"}, "Auto": {"ca": "Auto", "en": "Auto"}, "Claro": {"ca": "Clar", "en": "Light"}, "Oscuro": {"ca": "Fosc", "en": "Dark"}, "Volver al trabajo": {"ca": "Tornar a la feina", "en": "Back to work"}, "Tu propio agente, en el iPhone.": {"ca": "El teu propi agent, a l’iPhone.", "en": "Your own agent, on your iPhone."}, "Swift y SwiftUI": {"ca": "Swift i SwiftUI", "en": "Swift and SwiftUI"}, "React y TypeScript": {"ca": "React i TypeScript", "en": "React and TypeScript"}, "Servidor y agentes": {"ca": "Servidor i agents", "en": "Server and agents"}, "Estado": {"ca": "Estat", "en": "Status"}, "En uso diario": {"ca": "En ús diari", "en": "In daily use"}, "En el móvil, un agente vive dentro de un bot de mensajería. Sirve para preguntas. Pero cuando compra, inicia sesión o necesita tu permiso a mitad de tarea, hace falta otra cosa: ver lo que hace, y decidir tú.": {"ca": "Al mòbil, un agent viu dins d’un bot de missatgeria. Serveix per a preguntes. Però quan compra, inicia sessió o necessita el teu permís a mitja tasca, cal una altra cosa: veure què fa, i decidir tu.", "en": "On a phone, an agent lives inside a messaging bot. That’s fine for questions. But when it buys something, signs in or needs your permission halfway through, you need something else: to see what it does, and to decide."}, "Le pides algo. Como a una persona.": {"ca": "Li demanes alguna cosa. Com a una persona.", "en": "You ask it for something. Like you’d ask a person."}, "Un chat nativo con respuestas en directo, adjuntos y una voz que puedes interrumpir hablando. <b>Una cosa cada vez.</b>": {"ca": "Un xat natiu amb respostes en directe, adjunts i una veu que pots interrompre parlant. <b>Una cosa cada vegada.</b>", "en": "A native chat with live replies, attachments and a voice you can interrupt by speaking. <b>One thing at a time.</b>"}, "Ves lo que hace. Mientras lo hace.": {"ca": "Veus què fa. Mentre ho fa.", "en": "You see what it does. While it does it."}, "La página en la que está el agente aparece en el chat, en directo. <b>La tocas y tomas el control;</b> al acabar, se la devuelves.": {"ca": "La pàgina on és l’agent apareix al xat, en directe. <b>La toques i prens el control;</b> quan acabes, l’hi tornes.", "en": "The page the agent is on appears in the chat, live. <b>Tap it to take over;</b> when you’re done, hand it back."}, "Paga cuando tú dices «Pagar».": {"ca": "Paga quan tu dius «Pagar».", "en": "It pays when you say “Pay”."}, "Llena el carrito, la dirección y el envío, prueba los códigos de descuento y se para antes de pagar. <b>La tarjeta nunca pasa por el chat.</b>": {"ca": "Omple el cistell, l’adreça i l’enviament, prova els codis de descompte i s’atura abans de pagar. <b>La targeta mai no passa pel xat.</b>", "en": "It fills in the basket, the address and the delivery, tries the discount codes and stops before paying. <b>The card never goes through the chat.</b>"}, "Agentes, notas, rutinas. A un gesto.": {"ca": "Agents, notes, rutines. A un gest.", "en": "Agents, notes, routines. One gesture away."}, "Resumen de mañana y de noche, agenda, objetivos que se miden solos y avisos al llegar a un sitio, sin compartir dónde estás.": {"ca": "Resum del matí i del vespre, agenda, objectius que es mesuren sols i avisos en arribar a un lloc, sense compartir on ets.", "en": "Morning and evening summaries, calendar, goals that measure themselves and reminders when you arrive somewhere, without sharing where you are."}, "Por qué existe, qué decidí y qué me costó.": {"ca": "Per què existeix, què vaig decidir i què em va costar.", "en": "Why it exists, what I decided and what was hard."}, "El problema": {"ca": "El problema", "en": "The problem"}, "Hermes es un agente abierto muy capaz, pero en el móvil se usa a través de un bot de mensajería. Sirve para preguntas. Se queda corto cuando el agente compra, inicia sesión en una web o necesita tu permiso a mitad de tarea.": {"ca": "Hermes és un agent obert molt capaç, però al mòbil es fa servir a través d’un bot de missatgeria. Serveix per a preguntes. Es queda curt quan l’agent compra, inicia sessió en una web o necessita el teu permís a mitja tasca.", "en": "Hermes is a very capable open agent, but on a phone you reach it through a messaging bot. That works for questions. It falls short when the agent buys something, signs in to a site or needs your permission halfway through a task."}, "Las decisiones": {"ca": "Les decisions", "en": "The decisions"}, "App nativa en SwiftUI, no una web dentro de una app.": {"ca": "App nativa en SwiftUI, no una web dins d’una app.", "en": "A native SwiftUI app, not a website inside an app."}, "Ningún secreto en el chat: contraseñas, códigos y tarjetas van por hojas seguras a tu Mac.": {"ca": "Cap secret al xat: contrasenyes, codis i targetes van per fulls segurs al teu Mac.", "en": "No secrets in the chat: passwords, codes and cards go through secure sheets to your Mac."}, "Un paso irreversible, como pagar, espera un «Pagar» explícito.": {"ca": "Un pas irreversible, com pagar, espera un «Pagar» explícit.", "en": "An irreversible step, like paying, waits for an explicit “Pay”."}, "Hermes oficial, sin parches: lo que falta va en un plugin propio.": {"ca": "Hermes oficial, sense pedaços: el que falta va en un plugin propi.", "en": "Official Hermes, unpatched: anything missing goes in a plugin of my own."}, "Lo difícil": {"ca": "El difícil", "en": "The hard part"}, "Comprar de verdad. Cada tienda es distinta y el pago pasa por la página del banco. Alice distingue un pago confirmado de uno rechazado o sin confirmar, y bloquea un segundo pago en la misma tienda hasta saber qué pasó con el primero.": {"ca": "Comprar de debò. Cada botiga és diferent i el pagament passa per la pàgina del banc. Alice distingeix un pagament confirmat d’un de rebutjat o sense confirmar, i bloqueja un segon pagament a la mateixa botiga fins a saber què ha passat amb el primer.", "en": "Buying for real. Every shop is different and payment goes through the bank’s page. Alice tells a confirmed payment from a declined or unconfirmed one, and blocks a second payment at the same shop until it knows what happened to the first."}, "Dónde está hoy": {"ca": "On és avui", "en": "Where it is today"}, "La uso cada día para el chat, la agenda, los objetivos y los resúmenes. Las compras llegan hasta el pago y ya han destapado errores reales que he corregido. Todavía no la dejaría comprar sin supervisión.": {"ca": "La faig servir cada dia per al xat, l’agenda, els objectius i els resums. Les compres arriben fins al pagament i ja han destapat errors reals que he corregit. Encara no la deixaria comprar sense supervisió.", "en": "I use it every day for chat, calendar, goals and summaries. Purchases go as far as payment and have already surfaced real bugs that I’ve fixed. I wouldn’t yet let it buy unsupervised."}, "Ver el código": {"ca": "Veure el codi", "en": "See the code"}, "Tres capas, de punta a punta. Una decisión importante en cada una.": {"ca": "Tres capes, de punta a punta. Una decisió important en cadascuna.", "en": "Three layers, end to end. One important decision in each."}, "archivos de Swift en la app de iPhone": {"ca": "fitxers de Swift a l’app d’iPhone", "en": "Swift files in the iPhone app"}, "archivos de TypeScript en la web": {"ca": "fitxers de TypeScript a la web", "en": "TypeScript files in the web app"}, "archivos de Python en el servidor y los agentes": {"ca": "fitxers de Python al servidor i als agents", "en": "Python files in the server and agents"}, "iPhone y web": {"ca": "iPhone i web", "en": "iPhone and web"}, "Swift y TypeScript, unos 640 archivos": {"ca": "Swift i TypeScript, uns 640 fitxers", "en": "Swift and TypeScript, about 640 files"}, "Contraseñas, códigos y tarjetas se escriben en hojas seguras que van directas a tu Mac. El chat solo sabe que se guardaron.": {"ca": "Contrasenyes, codis i targetes s’escriuen en fulls segurs que van directes al teu Mac. El xat només sap que s’han desat.", "en": "Passwords, codes and cards are typed into secure sheets that go straight to your Mac. The chat only learns that they were saved."}, "Hermes en tu Mac": {"ca": "Hermes al teu Mac", "en": "Hermes on your Mac"}, "Python, unos 150 archivos": {"ca": "Python, uns 150 fitxers", "en": "Python, about 150 files"}, "Hermes oficial, sin parches; lo que falta va en un plugin propio. Un registro de pagos impide cobrar dos veces en la misma tienda.": {"ca": "Hermes oficial, sense pedaços; el que falta va en un plugin propi. Un registre de pagaments impedeix cobrar dues vegades a la mateixa botiga.", "en": "Official Hermes, unpatched; what’s missing goes in my own plugin. A payment ledger prevents charging twice at the same shop."}, "Agentes y modelo": {"ca": "Agents i model", "en": "Agents and model"}, "Un modelo juez y evaluaciones": {"ca": "Un model jutge i avaluacions", "en": "A judge model and evals"}, "Un segundo modelo hace de juez: devuelve al agente al trabajo si se para, y solo acepta «hecho» con una prueba.": {"ca": "Un segon model fa de jutge: torna l’agent a la feina si s’atura, i només accepta «fet» amb una prova.", "en": "A second model acts as judge: it sends the agent back to work if it stops, and only accepts “done” with proof."}, "Secciones": {"ca": "Seccions", "en": "Sections"}, "Notas": {"ca": "Notes", "en": "Notes"}, "Alice: inicio del chat": {"ca": "Alice: inici del xat", "en": "Alice: chat home"}, "Alice: menú lateral": {"ca": "Alice: menú lateral", "en": "Alice: side menu"}, "Marc Freixanet, Barcelona": {"ca": "Marc Freixanet, Barcelona", "en": "Marc Freixanet, Barcelona"}, "Saltar al contenido": {"ca": "Salta al contingut", "en": "Skip to content"}, "Nunca pagar dos veces": {"ca": "Mai pagar dues vegades", "en": "Never pay twice"}, "Piezas pequeñas de varios proyectos que muestran cómo trabajo: pantallas y código real.": {"ca": "Peces petites de diversos projectes que mostren com treballo: pantalles i codi real.", "en": "Small pieces from several projects that show how I work: real screens and real code."}, "Marc Freixanet construye productos completos: apps de iPhone, webs, y los servidores y agentes que hay detrás.": {"ca": "Marc Freixanet construeix productes complets: apps d’iPhone, webs, i els servidors i agents que hi ha al darrere.", "en": "Marc Freixanet builds complete products: iPhone apps, websites, and the servers and agents behind them."}};
+  var LANGS = ['ca', 'es', 'en'];
+  var lang = 'es';
+  function T(es) { return lang === 'es' || !I18N[es] ? es : I18N[es][lang]; }
+  var norm = function (h) { return h.replace(/\s+/g, ' ').trim(); };
+  var tEls = (function () {
+    var sel = 'h1,h2,h3,h4,p,li,dt,dd,span.label,span.pill,.prow span,.stack span,.figures span,.crumbs a,a.cta,button.btn,a.btn,.pref-k,[data-theme-set],.play-label,.nt,a.skip';
+    var all = Array.prototype.slice.call(document.querySelectorAll(sel)).filter(function (el) { return !el.closest('.screen-set, .inline-phone, .mail') && I18N[norm(el.innerHTML)]; });
+    var set = new Set(all);
+    return all.filter(function (el) { for (var p = el.parentElement; p; p = p.parentElement) if (set.has(p)) return false; return true; })
+      .map(function (el) { return { el: el, key: norm(el.innerHTML) }; });
+  })();
+  var aEls = Array.prototype.slice.call(document.querySelectorAll('[data-aria-t]')).map(function (el) { return { el: el, key: el.getAttribute('aria-label') }; });
+  var imgEls = Array.prototype.slice.call(document.querySelectorAll('img[alt]')).filter(function (i) { return I18N[i.alt]; }).map(function (el) { return { el: el, key: el.alt }; });
+  function splitWords(el) { el.innerHTML = el.textContent.trim().split(/\s+/).map(function (w) { return '<span>' + w + '</span>'; }).join(' '); }
+  function applyLang(next, live) {
+    lang = next;
+    root.setAttribute('lang', lang);
+    var desc = document.querySelector('meta[name="description"]');
+    if (desc) { if (!desc.dataset.es) desc.dataset.es = desc.content; desc.content = T(desc.dataset.es); }
+    tEls.forEach(function (x) { x.el.innerHTML = T(x.key); if (x.el.hasAttribute('data-lit')) splitWords(x.el); });
+    aEls.forEach(function (x) { x.el.setAttribute('aria-label', T(x.key)); });
+    imgEls.forEach(function (x) { x.el.alt = T(x.key); });
+    document.querySelectorAll('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
+    if (live) { var cur = chapterCurrent; chapterSet = ''; setChapter(home.hidden ? 'case' : 'home', cur); collect(); request(); }
+  }
+  var savedLang = null;
+  try { savedLang = localStorage.getItem('lang'); } catch (e) {}
+  var guess = (navigator.language || 'es').slice(0, 2).toLowerCase();
+  var urlLang = null;
+  try { urlLang = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+  applyLang(LANGS.indexOf(urlLang) !== -1 ? urlLang : LANGS.indexOf(savedLang) !== -1 ? savedLang : (LANGS.indexOf(guess) !== -1 ? guess : 'es'), false);
+
+  // Words of the statement, one span each
+  document.querySelectorAll('[data-lit]').forEach(function (el) {
+    el.innerHTML = el.textContent.trim().split(/\s+/).map(function (w) { return '<span>' + w + '</span>'; }).join(' ');
+  });
+
+  var header = document.querySelector('header.top');
+  var home = document.getElementById('home');
+  var chapters = {
+    home: [['trabajo', 'Trabajo'], ['detalles', 'Detalles'], ['sobre-mi', 'Sobre mí'], ['contacto', 'Contacto']],
+    case: [['alice', 'Alice'], ['historia', 'La historia'], ['como', 'Cómo está hecha']]
+  };
+  var chapterName = document.getElementById('chapterName'), chapterDots = document.getElementById('chapterDots');
+  var chapterSet = '', chapterCurrent = null, chapterTimer = 0;
+  function buildDots(set) {
+    chapterSet = set; chapterCurrent = null;
+    chapterDots.innerHTML = chapters[set].map(function (c) { return '<a href="#' + c[0] + '" aria-label="' + T(c[1]) + '"></a>'; }).join('');
+  }
+  function setChapter(set, id) {
+    if (set !== chapterSet) buildDots(set);
+    if (id === chapterCurrent) return;
+    chapterCurrent = id;
+    var label = set === 'home' ? T('Inicio') : 'Alice';
+    chapters[set].forEach(function (c) { if (c[0] === id) label = T(c[1]); });
+    Array.prototype.forEach.call(chapterDots.children, function (a, i) { a.classList.toggle('on', chapters[set][i][0] === id); });
+    clearTimeout(chapterTimer);
+    if (chapterName.textContent !== label) {
+      chapterName.classList.add('swap');
+      chapterTimer = setTimeout(function () { chapterName.textContent = label; chapterName.classList.remove('swap'); }, 160);
+    } else chapterName.classList.remove('swap');
+  }
+  var hero = document.querySelector('.intro h1');
+  var reveals = [], expands = [], pars = [], words = [], curtain, device, track;
+  function collect() {
+    reveals = Array.prototype.slice.call(document.querySelectorAll('[data-r]'));
+    expands = Array.prototype.slice.call(document.querySelectorAll('[data-expand]'));
+    pars = Array.prototype.slice.call(document.querySelectorAll('.par'));
+    pars.forEach(function (img) { img.style.setProperty('--speed', img.dataset.speed); });
+    words = Array.prototype.slice.call(document.querySelectorAll('[data-lit]')).map(function (g) { return Array.prototype.slice.call(g.querySelectorAll('span')); });
+    curtain = document.querySelector('[data-curtain]');
+    device = document.getElementById('device');
+    track = document.getElementById('track');
+  }
+  collect();
+
+  var ticking = false;
+  function frame() {
+    ticking = false;
+    var vh = window.innerHeight, y = window.scrollY;
+    header.classList.toggle('scrolled', y > 4);
+    var set = home.hidden ? 'case' : 'home', current = '';
+    chapters[set].forEach(function (c) { var t = document.getElementById(c[0]); if (t && t.offsetParent !== null && t.getBoundingClientRect().top <= vh * .45) current = c[0]; });
+    if (set === 'home' && y + vh >= document.documentElement.scrollHeight - 2) current = 'contacto';
+    if (set === 'case' && !current) current = 'alice';
+    setChapter(set, current);
+    if (reduce) return;
+
+    // Hero eases back as you leave it
+    if (hero && !document.getElementById('home').hidden) {
+      var q = clamp(y / (vh * .7));
+      hero.style.transform = 'scale(' + (1 - q * .06) + ')';
+      hero.style.opacity = 1 - q * .7;
+    }
+    expands.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      var p = ease(clamp((vh - r.top) / (vh * .75)));
+      el.style.setProperty('--p', p.toFixed(3));
+      pars.forEach(function (img) { if (el.contains(img)) img.style.setProperty('--p', p.toFixed(3)); });
+    });
+    words.forEach(function (group) {
+      if (!group.length || !group[0].offsetParent) return;
+      var box = group[0].parentNode.getBoundingClientRect();
+      if (box.top + y < vh * .85) { if (!group.done) { group.forEach(function (w) { w.style.setProperty('--w', 1); }); group.done = true; } return; }
+      var prog = clamp((vh * .85 - box.top) / (box.height + vh * .3));
+      var lit = prog * (group.length + 4);
+      group.forEach(function (w, i) { w.style.setProperty('--w', (0.2 + 0.8 * clamp(lit - i)).toFixed(2)); });
+    });
+    if (curtain && curtain.offsetParent) {
+      var ct = curtain.getBoundingClientRect().top;
+      curtain.style.setProperty('--p', ease(clamp((vh - ct) / (vh * .6))).toFixed(3));
+    }
+    if (device && device.offsetParent) {
+      var st = document.getElementById('story').getBoundingClientRect().top;
+      device.style.setProperty('--p', ease(clamp((vh - st) / (vh * .7))).toFixed(3));
+    }
+  }
+  function request() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+
+  // Reveals play once. Siblings that arrive together are staggered by 70 ms.
+  (function () {
+    if (reduce || !('IntersectionObserver' in window)) { reveals.forEach(function (el) { el.classList.add('in'); }); return; }
+    // Anything already on screen is shown as is, with no animation (at load, and after a jump to a shared section)
+    function showInView() {
+      var vh = window.innerHeight, shown = [];
+      reveals.forEach(function (el) {
+        if (el.classList.contains('in')) return;
+        var r = el.getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0 && el.offsetParent) shown.push(el);
+      });
+      if (!shown.length) return;
+      root.classList.add('reveal-now');
+      shown.forEach(function (el) { el.classList.add('in'); });
+      void root.offsetHeight;
+      setTimeout(function () { root.classList.remove('reveal-now'); }, 50);
+    }
+    window.__showInView = showInView;
+    showInView();
+    var batch = [], flushing = false;
+    function flush() {
+      batch.sort(function (a, b) { return a.getBoundingClientRect().top - b.getBoundingClientRect().top; });
+      batch.forEach(function (el, i) { el.style.setProperty('--delay', Math.min(i, 5) * 70 + 'ms'); el.classList.add('in'); });
+      batch = []; flushing = false;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting || e.target.classList.contains('in')) return;
+        io.unobserve(e.target); batch.push(e.target);
+      });
+      if (batch.length && !flushing) { flushing = true; setTimeout(flush, 16); }
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+    reveals.forEach(function (el) { if (!el.classList.contains('in')) io.observe(el); });
+    // Elements in a view that opens later (the case page) are observed when it is shown
+    window.addEventListener('hashchange', function () {
+      setTimeout(function () {
+        var h = window.innerHeight;
+        reveals.forEach(function (el) {
+          if (el.classList.contains('in') || !el.offsetParent) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < h && r.bottom > 0) el.classList.add('in');
+        });
+      }, 60);
+    });
+  })();
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  frame();
+
+
+  var dots = Array.prototype.slice.call(document.querySelectorAll('#dots i'));
+  function show(i) {
+    screens.forEach(function (s, j) { s.classList.toggle('on', j === i); });
+    dots.forEach(function (d, j) { d.classList.toggle('on', j === i); });
+    steps.forEach(function (s, j) { s.classList.toggle('on', j === i); });
+  }
+  show(0);
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) show(Number(e.target.dataset.screen)); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    steps.forEach(function (s) { io.observe(s); });
+  }
+
+  // Two views in one page: the index and Alice's case.
+  var caseView = document.getElementById('case');
+  var caseIds = ['alice', 'como'];
+  var homeY = 0, pendingFocus = null;
+  function moveFocus() {                                  // keyboard focus follows the view, once it is on screen
+    if (pendingFocus) { pendingFocus.focus({ preventScroll: true }); pendingFocus = null; }
+  }
+  function apply() {
+    var h = location.hash.replace('#', '');
+    var inCase = caseIds.indexOf(h) !== -1;
+    var wasCase = !caseView.hidden;
+    if (inCase && !wasCase) homeY = window.scrollY;
+    home.hidden = inCase; caseView.hidden = !inCase; caseView.classList.toggle('open', inCase);
+    document.title = inCase ? 'Alice — Marc Freixanet' : 'Marc Freixanet';
+    if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+    if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) { t.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true }); } }
+    if (!inCase && wasCase && !h) {                       // browser Back: the index at the point you left it
+      window.scrollTo(0, homeY); if (window.__lenis) window.__lenis.scrollTo(homeY, { immediate: true });
+      pendingFocus = document.querySelector('a.project.feature');
+    }
+    if (inCase && !wasCase) { pendingFocus = caseView.querySelector('h1'); if (pendingFocus) pendingFocus.setAttribute('tabindex', '-1'); }
+    if (window.__lenis) window.__lenis.resize();
+    frame();
+  }
+  function route(animate) {
+    var h = location.hash.replace('#', '');
+    var changing = (caseIds.indexOf(h) !== -1) === caseView.hidden;
+    if (animate && changing && !reduce && document.startViewTransition && document.visibilityState === 'visible') {
+      var vt = document.startViewTransition(apply);
+      [vt.ready, vt.finished, vt.updateCallbackDone].forEach(function (pr) { if (pr) pr.catch(function () {}); });
+      vt.finished.then(moveFocus, moveFocus);           // focus can only land once the new view is painted
+    }
+    else { apply(); moveFocus(); }
+  }
+  window.addEventListener('hashchange', function () { route(true); });
+  // Section links on the index scroll to their section without writing it into the address,
+  // so a reload always opens at the top. Only the Alice case keeps its own address (#alice).
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function clearHash() { history.replaceState(null, '', location.pathname + location.search); }
+  function goTo(el) {
+    if (window.__lenis) window.__lenis.scrollTo(el, { offset: -56 });
+    else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    var id = a.getAttribute('href').slice(1);
+    if (caseIds.indexOf(id) !== -1) return;                 // opening the case: let the router handle it
+    var el = id === 'top' ? document.body : document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    if (!caseView.hidden) {                                 // from the case back to the index
+      location.hash = id;                                   // the router shows the index and scrolls there
+      return;
+    }
+    if (id === 'top') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); clearHash(); }
+    else { goTo(el); history.replaceState(null, '', '#' + id); }   // shareable, without stacking history entries
+  });
+  // A shared link (#detalles, #contacto…) opens at its section; a reload always opens at the top.
+  var startHash = location.hash.replace('#', '');
+  var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  var isReload = navEntry ? navEntry.type === 'reload' : false;
+  var homeTarget = startHash && caseIds.indexOf(startHash) === -1 ? document.getElementById(startHash) : null;
+  if (homeTarget && isReload) { clearHash(); homeTarget = null; }
+  function toTop() {
+    if (homeTarget) { homeTarget.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(homeTarget, { offset: -56, immediate: true }); if (window.__showInView) window.__showInView(); return; }
+    window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
+  }
+  toTop();
+  var touched = false;                                    // never pull someone back who has already started scrolling
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, function () { touched = true; }, { once: true, passive: true }); });
+  window.addEventListener('load', function () { if (!touched) toTop(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) toTop(); });
+  route(false);
+
+
+  // ——— The signal ———
+  // A sum of slow waves at rest. Moving the pointer or scrolling adds energy,
+  // which brings in faster, finer waves; with no input it settles back to calm.
+  (function () {
+    var cv = document.getElementById('signal');
+    if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d'), w = 0, h = 0, dpr = 1, color = '#000';
+    var energy = 0, drive = 0, phase = 0, last = 0, running = false, visible = true;
+    var px = -1, near = 0, nearDrive = 0, lastMove = { x: 0, y: 0, t: 0 };
+    function readColor() { color = getComputedStyle(document.body).color; }
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var r = cv.getBoundingClientRect(); w = r.width; h = r.height;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    var TAU = Math.PI * 2;
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      var mid = h / 2, amp = 5 + energy * 16;
+      var s = phase;
+      ctx.beginPath();
+      for (var x = 0; x <= w; x += 2) {
+        var u = x / w;
+        var env = Math.pow(Math.sin(Math.PI * u), .7);
+        var calm = Math.sin(TAU * 1.4 * u + s * .55) * .62 + Math.sin(TAU * 2.6 * u - s * .8) * .38;
+        var busy = Math.sin(TAU * 9 * u + s * 3.1) * .55 + Math.sin(TAU * 17 * u - s * 4.7) * .3 + Math.sin(TAU * 31 * u + s * 7.3) * .15;
+        var y = calm * (1 - energy * .35) + busy * energy;
+        var bump = 0;
+        if (px >= 0) { var d = (x - px) / 90; bump = Math.exp(-d * d) * near * 14; }
+        ctx.lineTo(x, mid + (y * amp - bump) * env);
+      }
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = .55 + energy * .35;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+    function tick(t) {
+      if (!running) return;
+      var dt = Math.min(.05, (t - (last || t)) / 1000); last = t;
+      drive *= Math.pow(.25, dt);           // input fades in about a second
+      nearDrive *= Math.pow(.2, dt);
+      energy += (Math.min(drive, 1) - energy) * (1 - Math.pow(.02, dt));   // critically damped follow
+      near += (Math.min(nearDrive, 1) - near) * (1 - Math.pow(.01, dt));
+      phase += dt * (1 + energy * 2.4);
+      draw();
+      requestAnimationFrame(tick);
+    }
+    function start() { if (running || reduce || !visible || document.hidden) return; running = true; last = 0; requestAnimationFrame(tick); }
+    function stop() { running = false; }
+
+    readColor(); size(); draw();
+    if (reduce) { new MutationObserver(function () { readColor(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); return; }
+    window.addEventListener('resize', function () { size(); draw(); });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { readColor(); draw(); });
+    // the theme can also be switched from the footer
+    new MutationObserver(function () { readColor(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    window.addEventListener('pointermove', function (e) {
+      var now = performance.now(), dtm = Math.max(16, now - lastMove.t);
+      var v = Math.hypot(e.clientX - lastMove.x, e.clientY - lastMove.y) / dtm;   // px per ms
+      lastMove = { x: e.clientX, y: e.clientY, t: now };
+      drive = Math.min(1.2, drive + v * .05);
+      var r = cv.getBoundingClientRect();
+      if (e.clientY > r.top - 80 && e.clientY < r.bottom + 80) { px = e.clientX - r.left; nearDrive = Math.min(1, nearDrive + .2); }
+    }, { passive: true });
+    var lastY = window.scrollY;
+    window.addEventListener('scroll', function () {
+      var dy = Math.abs(window.scrollY - lastY); lastY = window.scrollY;
+      drive = Math.min(1.2, drive + dy * .004);
+    }, { passive: true });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; if (visible) start(); else stop(); }).observe(cv);
+    }
+    start();
+  })();
+
+
+  // ——— Two speeds ———
+  // Each [data-lag] element trails the page by a fraction of its distance from the
+  // centre of the screen, eased so it glides rather than jumps.
+  (function () {
+    var els = Array.prototype.slice.call(document.querySelectorAll('[data-lag]'));
+    if (reduce || !els.length) return;
+    var items = els.map(function (el) { return { el: el, k: Number(el.dataset.lag), cur: 0, tgt: 0 }; });
+    var raf = 0;
+    function measure() {
+      var vh = window.innerHeight, small = window.matchMedia('(width < 54rem)').matches;
+      items.forEach(function (it) {
+        if (!it.el.offsetParent) { it.tgt = 0; return; }
+        var r = it.el.getBoundingClientRect();
+        var d = (r.top - it.cur) + r.height / 2 - vh / 2;      // distance from centre, without our own offset
+        it.tgt = -d * it.k * (small ? .4 : 1);
+      });
+    }
+    function step() {
+      var moving = false;
+      items.forEach(function (it) {
+        it.cur += (it.tgt - it.cur) * .14;
+        if (Math.abs(it.tgt - it.cur) > .1) moving = true; else it.cur = it.tgt;
+        it.el.style.transform = 'translate3d(0,' + it.cur.toFixed(2) + 'px,0)';
+      });
+      raf = moving ? requestAnimationFrame(step) : 0;
+    }
+    function kick() { measure(); if (!raf) raf = requestAnimationFrame(step); }
+    window.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', kick);
+    window.addEventListener('hashchange', function () { setTimeout(kick, 60); });
+    kick();
+  })();
+
+
+  // ——— Smooth scroll on desktop ———
+  var lenis = null;
+  if (!reduce && window.Lenis && window.matchMedia('(pointer: fine)').matches) {
+    lenis = new Lenis({ lerp: .1, smoothWheel: true });
+    (function loop(t) { lenis.raf(t); requestAnimationFrame(loop); })(performance.now());
+    window.__lenis = lenis;
+  }
+
+  // ——— Figures count up once, when they come into view ———
+  if (!reduce && 'IntersectionObserver' in window) {
+    var counters = Array.prototype.slice.call(document.querySelectorAll('[data-count]'));
+    var co = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        co.unobserve(e.target);
+        var el = e.target, to = Number(el.dataset.count), t0 = performance.now(), dur = 1400;
+        (function tick(now) {
+          var k = Math.min(1, (now - t0) / dur), eased = 1 - Math.pow(1 - k, 4);
+          el.textContent = Math.round(to * eased);
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }, { threshold: .6 });
+    counters.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0 && el.offsetParent) return;   // already visible: leave the real number
+      el.textContent = '0';
+      co.observe(el);
+    });
+  }
+
+
+  // ——— Preference buttons ———
+  // Applied at once: a page-wide crossfade had to capture the whole page first and held the next paint
+  // back by 300–700 ms, well over the 200 ms that keeps an interaction feeling immediate (INP).
+  function swap(fn) { fn(); }
+  document.querySelectorAll('[data-lang]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.lang === lang) return;
+      swap(function () { applyLang(b.dataset.lang, true); });
+      try { localStorage.setItem('lang', b.dataset.lang); } catch (e) {}
+    });
+  });
+  var themeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-theme-set]'));
+  // No choice saved means the page follows the system; the option shown as active is the one in effect.
+  var sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+  var themeChoice = 'auto';
+  function effective() { return themeChoice === 'auto' ? (sysDark.matches ? 'dark' : 'light') : themeChoice; }
+  function applyTheme(t) {
+    themeChoice = t;
+    if (t === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
+    themeBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === effective())); });
+  }
+  sysDark.addEventListener('change', function () { if (themeChoice === 'auto') applyTheme('auto'); });
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+  applyTheme(['light', 'dark'].indexOf(savedTheme) !== -1 ? savedTheme : 'auto');
+  themeBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = b.dataset.themeSet;
+      if (t === effective()) return;
+      // Choosing what the system already shows goes back to following the system
+      var next = t === (sysDark.matches ? 'dark' : 'light') ? 'auto' : t;
+      swap(function () { applyTheme(next); });
+      try { if (next === 'auto') localStorage.removeItem('theme'); else localStorage.setItem('theme', next); } catch (e) {}
+    });
+  });
+
+  var btn = document.getElementById('copy'), mail = document.getElementById('mail');
+  btn.addEventListener('click', function () {
+    var select = function () { window.getSelection().selectAllChildren(mail); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(mail.textContent).then(function () {
+        btn.textContent = T('Copiado');
+        setTimeout(function () { btn.textContent = T('Copiar'); }, 1600);
+      }, select);
+    } else { select(); }
+  });
+})();
+</script>

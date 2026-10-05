@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://freixanet.github.io/portfolio/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en"/>
+  </url>
+  <url>
+    <loc>https://freixanet.github.io/portfolio/?lang=ca</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en"/>
+  </url>
+  <url>
+    <loc>https://freixanet.github.io/portfolio/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en"/>
+  </url>
+</urlset>

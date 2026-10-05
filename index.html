@@ -3,13 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Marc Freixanet construye productos completos: apps de iPhone, webs, y los servidores y agentes que hay detrás.">
 <meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://freixanet.github.io/portfolio/">
+<link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca">
+<link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en">
+<link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/">
+<link rel="alternate" hreflang="x-default" href="https://freixanet.github.io/portfolio/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freixanet.github.io/portfolio/">
+<meta property="og:title" content="Marc Freixanet">
+<meta property="og:description" content="Marc Freixanet construye productos completos: apps de iPhone, webs, y los servidores y agentes que hay detrás.">
+<meta property="og:image" content="https://freixanet.github.io/portfolio/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Marc Freixanet. Construyo productos completos.">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:locale:alternate" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Marc Freixanet", "url": "https://freixanet.github.io/portfolio/", "jobTitle": "Developer", "homeLocation": {"@type": "Place", "name": "Barcelona"}, "sameAs": ["https://github.com/Freixanet"]}</script>
 <title>Marc Freixanet</title>
 <script>document.documentElement.classList.add('js');</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..600&family=Geist+Mono:wght@400&display=swap">
+<link rel="preload" href="fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -223,22 +243,22 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
       <div class="story grid12" id="story">
         <div class="left">
           <article class="step" data-screen="0">
-            <h3>Le pides algo. Como a una persona.</h3>
+            <h2>Le pides algo. Como a una persona.</h2>
             <p>Un chat nativo con respuestas en directo, adjuntos y una voz que puedes interrumpir hablando. <b>Una cosa cada vez.</b></p>
             <div class="inline-phone"></div>
           </article>
           <article class="step" data-screen="1">
-            <h3>Ves lo que hace. Mientras lo hace.</h3>
+            <h2>Ves lo que hace. Mientras lo hace.</h2>
             <p>La página en la que está el agente aparece en el chat, en directo. <b>La tocas y tomas el control;</b> al acabar, se la devuelves.</p>
             <div class="inline-phone"></div>
           </article>
           <article class="step" data-screen="2">
-            <h3>Paga cuando tú dices «Pagar».</h3>
+            <h2>Paga cuando tú dices «Pagar».</h2>
             <p>Llena el carrito, la dirección y el envío, prueba los códigos de descuento y se para antes de pagar. <b>La tarjeta nunca pasa por el chat.</b></p>
             <div class="inline-phone"></div>
           </article>
           <article class="step" data-screen="3">
-            <h3>Agentes, notas, rutinas. A un gesto.</h3>
+            <h2>Agentes, notas, rutinas. A un gesto.</h2>
             <p>Resumen de mañana y de noche, agenda, objetivos que se miden solos y avisos al llegar a un sitio, sin compartir dónde estás.</p>
             <div class="inline-phone"></div>
           </article>
@@ -356,7 +376,7 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
   </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" defer></script>
+<script src="vendor/lenis-1.3.26.min.js" defer></script>
 <script src="app.js" defer></script>
 
 </body>
