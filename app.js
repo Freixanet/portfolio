@@ -126,6 +126,7 @@
     words.forEach(function (group) {
       if (!group.length || !group[0].offsetParent) return;
       var box = group[0].parentNode.getBoundingClientRect();
+      if (box.top + y < vh * .85) { if (!group.done) { group.forEach(function (w) { w.style.setProperty('--w', 1); }); group.done = true; } return; }
       var prog = clamp((vh * .85 - box.top) / (box.height + vh * .3));
       var lit = prog * (group.length + 4);
       group.forEach(function (w, i) { w.style.setProperty('--w', (0.2 + 0.8 * clamp(lit - i)).toFixed(2)); });

@@ -109,14 +109,15 @@
               <span class="cursor"></span>
               <div class="composer">Habla con Alice…</div>
             </div></div></div></div></div></div></div>
-        <div class="tile"><div class="text"><h3>Anonimizar antes de enviar</h3><span class="label">Lexia</span></div><div class="frame code" data-r="frame"><pre><code>const USER_PLACEHOLDER = &#x27;[Usuario]&#x27;;
-const DOC_PLACEHOLDER = &#x27;[documento]&#x27;;
+        <div class="tile"><div class="text"><h3>Anonimizar antes de enviar</h3><span class="label">Lexia</span></div><div class="frame code" data-r="frame"><pre><code>const DOC_PLACEHOLDER = &#x27;[documento]&#x27;;
 
-<span class="c">/** Patrones que revelan DNI/NIF u otro documento de identidad. */</span>
+<span class="c">/** Patrones que revelan un DNI/NIF. */</span>
 const DOC_PATTERNS = [
-  /\b(DNI|NIF|NIE|documento de identidad):\s*[A-Z0-9\-]{4,}/gi,
-  /\b(mi DNI es|mi NIF es|mi NIE es)\s+[A-Z0-9\-]{4,}/gi,
-];</code></pre><span class="file">src/utils/pseudonymize.ts</span></div></div>
+  /\b(DNI|NIF|NIE):\s*[A-Z0-9\-]{4,}/gi,
+  /\bmi (DNI|NIF|NIE) es\s+[A-Z0-9\-]{4,}/gi,
+];
+
+text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">src/utils/pseudonymize.ts</span></div></div>
         <div class="tile"><div class="text"><h3>La tarjeta, fuera del chat</h3><span class="label">Alice</span></div><div class="frame shot" data-r="frame"><div class="mini" aria-hidden="true"><div class="phone"><div class="screen-set"><div class="screen on"><div class="ui">
               <div class="bar"><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 4.5h10M2 9.5h10" stroke="#161614" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3.5 4 10.5M10 3.5 9 10.5" stroke="#161614" stroke-width="2" stroke-linecap="round"/></svg></span></div>
               <div class="her">Todo listo. Con el código <b>OTONO10</b> baja 7,60&nbsp;€.</div>
@@ -130,14 +131,18 @@ const DOC_PATTERNS = [
               <div class="her" style="color:#8d8b84;font-size:11px">Alice pagará en esta web con tu Visa&nbsp;···4242.</div>
               <div class="composer">Habla con Alice…</div>
             </div></div></div></div></div></div></div>
-        <div class="tile"><div class="text"><h3>Nunca pagar dos veces</h3><span class="label">Alice</span></div><div class="frame code" data-r="frame"><pre><code>def _guard_repeat_payment(tool_name=None, args=None, session_id=&quot;&quot;, **_):
-<span class="c">    &quot;&quot;&quot;One payment per order: an unsettled payment on the same shop</span>
-<span class="c">    blocks the fill; a paid or unknown one goes through the approval card.&quot;&quot;&quot;</span>
+        <div class="tile"><div class="text"><h3>Nunca pagar dos veces</h3><span class="label">Alice</span></div><div class="frame code" data-r="frame"><pre><code>def _guard_repeat_payment(tool_name, args,
+                          session_id=&quot;&quot;, **_):
+<span class="c">    &quot;&quot;&quot;One payment per order: an unsettled</span>
+<span class="c">    payment on the same shop blocks it.&quot;&quot;&quot;</span>
     meta = _card_fill(tool_name, args)
     if meta is None:
         return None
-    site = _purchases().merchant(_open_tabs(), meta.origin or &quot;&quot;, PAYMENT_GATEWAYS)
-    return _purchases().guard(_hermes_root(), site, session_id or &quot;&quot;)</code></pre><span class="file">hermes-plugin/__init__.py</span></div></div>
+    site = _purchases().merchant(
+        _open_tabs(), meta.origin or &quot;&quot;,
+        PAYMENT_GATEWAYS)
+    return _purchases().guard(
+        _hermes_root(), site, session_id)</code></pre><span class="file">hermes-plugin/__init__.py</span></div></div>
       </div>
     </section>
 
