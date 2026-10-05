@@ -141,6 +141,18 @@ for (const width of [320, 375]) {
   });
 }
 
+test('text at 200% on a phone and a laptop: nothing pushes the page sideways (WCAG 1.4.4, 1.4.10)', async ({ page }) => {
+  for (const width of [375, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    for (const path of ['./', './ca/', './en/', './#alice']) {
+      await page.goto(path);
+      await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+      const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(over, `${width}px ${path}`).toBeLessThanOrEqual(0);
+    }
+  }
+});
+
 test('nothing is requested from other sites', async ({ page }) => {
   const outside = [];
   page.on('request', (r) => { if (!r.url().startsWith('http://127.0.0.1:4173/')) outside.push(r.url()); });

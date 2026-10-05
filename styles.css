@@ -179,7 +179,7 @@ a.project:active .frame { transform: scale(.98); transition-duration: .12s; }
 .marker h2 { grid-column: 2 / 7; font-size: var(--t-small); font-weight: 500; letter-spacing: -.005em; }
 .marker .aside { grid-column: 7 / 13; color: var(--muted); }
 .contact .marker { border-top-color: color-mix(in srgb, var(--cfg) 18%, transparent); }
-.contact-big { font-size: clamp(2.5rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.035em; font-weight: 500; }
+.contact-big { hyphens: auto; overflow-wrap: break-word; font-size: clamp(2.5rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.035em; font-weight: 500; }
 sup { font-size: .62em; line-height: 0; vertical-align: .55em; margin-inline-start: .08em; }
 .fn { color: var(--muted); text-decoration: none; }
 @media (hover: hover) { .fn:hover { color: var(--fg); } }
@@ -193,7 +193,7 @@ header.top .wrap { display: grid; grid-template-columns: 1fr auto 1fr; }
 header.top nav { justify-self: center; }
 .cta { justify-self: end; font-size: var(--t-small); font-weight: 500; white-space: nowrap; }
 .tile .text { order: 0; }
-.case-hero .giant { font-size: clamp(5.5rem, 18vw, 16.25rem); line-height: .82; }
+.case-hero .giant { font-size: clamp(min(5.5rem, 28cqi), 18vw, 16.25rem); line-height: .82; }   /* one word: never wider than its column */
 .case-hero .sub .big { font-size: clamp(1.375rem, 2.4vw, 2rem); color: var(--fg); }
 
 
@@ -541,6 +541,14 @@ nav a.here { color: var(--fg); }
 @container page (width < 26rem) { .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); } }
 /* The header drops the name when the pill and the action need the row */
 @container page (width < 28rem) { .name .nm { display: none; } }
+/* With very large text (200% and up on a phone) the header takes two rows instead of pushing the page sideways,
+   preferences wrap, and a long word in a statement breaks with a hyphen (WCAG 1.4.4 and 1.4.10) */
+@container page (width < 19rem) {
+  header.top .wrap { height: auto; min-block-size: 56px; grid-template-columns: auto 1fr; row-gap: var(--s1); padding-block: var(--s1); }
+  header.top .chapter { grid-row: 2; grid-column: 1 / -1; justify-self: start; }
+}
+.pref { flex-wrap: wrap; }
+[data-lit] { hyphens: auto; overflow-wrap: break-word; }
 /* At 320px the pill and the action still share one row: dots keep the 24px minimum target (WCAG 2.5.8) */
 @container page (width < 22rem) {
   .chapter-dots a { width: 24px; }
