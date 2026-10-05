@@ -539,8 +539,8 @@ nav a.here { color: var(--fg); }
   .intro { padding-top: var(--s9); }
   .head { margin-bottom: var(--s7); }
   .contact { margin-inline: calc((1 - var(--p, 1)) * 12px); }
-  /* On a phone the panel ends as a sheet does: its bottom corners use the same large radius as the cards */
-  .contact { border-end-start-radius: var(--r-lg); border-end-end-radius: var(--r-lg); }
+  /* On a phone the panel lands as a card: top corners settle from 48px to the card radius, bottom ones stay at it */
+  .contact { --cr: calc(var(--r-lg) + (1 - var(--p, 1)) * (48px - var(--r-lg))); border-radius: var(--cr) var(--cr) var(--r-lg) var(--r-lg); }
   .device { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
