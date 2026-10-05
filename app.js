@@ -274,7 +274,7 @@
       if (window.__lenis) window.__lenis.scrollTo(end); else window.scrollTo({ top: end, behavior: reduce ? 'auto' : 'smooth' });
       return;
     }
-    if (window.__lenis) window.__lenis.scrollTo(el, { offset: -56 });
+    if (window.__lenis) window.__lenis.scrollTo(el, { offset: -parseFloat(getComputedStyle(root).getPropertyValue('--header-h')) || -56 });
     else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }
   document.addEventListener('click', function (e) {
@@ -316,7 +316,10 @@
   toTop();
   var touched = false;                                    // never pull someone back who has already started scrolling
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, function () { touched = true; }, { once: true, passive: true }); });
-  window.addEventListener('load', function () { if (!touched) toTop(); restoreHash(); });
+  window.addEventListener('load', function () {
+    if (!touched) toTop();
+    setTimeout(function () { if (!touched) toTop(); restoreHash(); }, 60);   // after Safari's own late jump, if any
+  });
   window.addEventListener('pageshow', function (e) { if (e.persisted) toTop(); });
   route(false);
 
