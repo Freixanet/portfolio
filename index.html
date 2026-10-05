@@ -1108,9 +1108,11 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     function stop() { running = false; }
 
     readColor(); size(); draw();
-    if (reduce) return;
+    if (reduce) { new MutationObserver(function () { readColor(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); return; }
     window.addEventListener('resize', function () { size(); draw(); });
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { readColor(); draw(); });
+    // the theme can also be switched from the footer
+    new MutationObserver(function () { readColor(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     window.addEventListener('pointermove', function (e) {
       var now = performance.now(), dtm = Math.max(16, now - lastMove.t);
       var v = Math.hypot(e.clientX - lastMove.x, e.clientY - lastMove.y) / dtm;   // px per ms
