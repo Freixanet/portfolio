@@ -116,6 +116,12 @@ nav a:hover { color: var(--fg); }
 .signal { grid-column: 1 / -1; display: block; width: 100%; height: 112px; margin-block: calc(var(--s5) * -1); }
 .motion .signal { animation: rise 1.4s var(--ease) .45s both; }
 
+/* Lenis (smooth scroll on desktop, as on ndstudio.gov, TrumpRx, Real Food and NASA Force) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
 /* Buttons and pills: 44pt targets */
 .btn {
   height: 44px; display: inline-flex; align-items: center; gap: var(--s2); padding-inline: 20px;
@@ -349,9 +355,12 @@ footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid va
    JS writes a progress --p (0→1) on each element; CSS turns it into motion.
    With reduced motion, --p stays at 1 and nothing moves. */
 @keyframes rise { from { opacity: 0; transform: translateY(.4em); filter: blur(12px); } }
-.motion .intro .ln { display: block; animation: rise 1.1s var(--ease) both; }
-.motion .intro .side.ln { animation-delay: .2s; }
-.motion .intro .big.ln { animation-delay: .3s; }
+@keyframes ink { from { color: var(--giant); } }
+@keyframes appear { from { opacity: 0; } }
+.motion .intro .giant.ln { animation: ink 1.8s cubic-bezier(.215, .61, .355, 1) .1s both; }
+.motion .intro .side.ln, .motion .intro .big.ln { animation: appear 1.2s cubic-bezier(.215, .61, .355, 1) both; }
+.motion .intro .side.ln { animation-delay: .5s; }
+.motion .intro .big.ln { animation-delay: .6s; }
 .intro h1 { transform-origin: 0 100%; }
 
 /* Reveals, after Apple and the National Design Studio: each element plays once as it comes into view,
@@ -406,7 +415,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
 /* Case: a statement that lights up word by word as you read */
 .statement { padding-block: var(--s8) var(--s9); }
 .words { font-family: var(--display); font-size: var(--t-h2); line-height: 1.08; letter-spacing: -.025em; max-width: 18em; }
-.words span { opacity: var(--w, 1); transition: opacity .15s linear; }
+[data-lit] span { opacity: var(--w, 1); transition: opacity .2s linear; }
 
 /* Story: the phone settles into place; an iOS page control follows the steps */
 .device { width: min(320px, 100%, calc((100vh - 170px) * 1206 / 2622)); display: grid; justify-items: center; gap: var(--s5); transform: translate3d(0, calc((1 - var(--p, 1)) * 60px), 0) scale(calc(.9 + var(--p, 1) * .1)); }
@@ -488,7 +497,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
       <canvas class="signal" id="signal" aria-hidden="true"></canvas>
       <div class="side-row grid12">
         <p class="side ln">Swift, TypeScript<br>y Python</p>
-        <p class="big right ln">Apps de iPhone, webs, y los servidores y agentes que hay detrás. Desde Barcelona.</p>
+        <p class="big right ln" data-lit>Apps de iPhone, webs, y los servidores y agentes que hay detrás. Desde Barcelona.</p>
       </div>
     </section>
 
@@ -610,7 +619,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     </section>
 
     <section class="wrap statement">
-      <p class="words">En el móvil, un agente vive dentro de un bot de mensajería. Sirve para preguntas. Pero cuando compra, inicia sesión o necesita tu permiso a mitad de tarea, hace falta otra cosa: ver lo que hace, y decidir tú.</p>
+      <p class="words" data-lit>En el móvil, un agente vive dentro de un bot de mensajería. Sirve para preguntas. Pero cuando compra, inicia sesión o necesita tu permiso a mitad de tarea, hace falta otra cosa: ver lo que hace, y decidir tú.</p>
     </section>
 
     <section class="wrap">
@@ -723,9 +732,9 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
         <p class="aside">Tres capas, de punta a punta. Una decisión importante en cada una.</p>
       </div>
             <div class="figures">
-        <div><b>400</b><span>archivos de Swift en la app de iPhone</span></div>
-        <div><b>240</b><span>archivos de TypeScript en la web</span></div>
-        <div><b>150</b><span>archivos de Python en el servidor y los agentes</span></div>
+        <div><b data-count="400">400</b><span>archivos de Swift en la app de iPhone</span></div>
+        <div><b data-count="240">240</b><span>archivos de TypeScript en la web</span></div>
+        <div><b data-count="150">150</b><span>archivos de Python en el servidor y los agentes</span></div>
       </div>
       <div class="layers">
         <div class="layer">
@@ -750,6 +759,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
   </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script>
 (function () {
   var set = document.getElementById('screens');
@@ -778,7 +788,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
   var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
 
   // Words of the statement, one span each
-  document.querySelectorAll('.words').forEach(function (el) {
+  document.querySelectorAll('[data-lit]').forEach(function (el) {
     el.innerHTML = el.textContent.trim().split(/\s+/).map(function (w) { return '<span>' + w + '</span>'; }).join(' ');
   });
 
@@ -813,7 +823,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     expands = Array.prototype.slice.call(document.querySelectorAll('[data-expand]'));
     pars = Array.prototype.slice.call(document.querySelectorAll('.par'));
     pars.forEach(function (img) { img.style.setProperty('--speed', img.dataset.speed); });
-    words = Array.prototype.slice.call(document.querySelectorAll('.words span'));
+    words = Array.prototype.slice.call(document.querySelectorAll('[data-lit]')).map(function (g) { return Array.prototype.slice.call(g.querySelectorAll('span')); });
     curtain = document.querySelector('[data-curtain]');
     device = document.getElementById('device');
     track = document.getElementById('track');
@@ -844,12 +854,13 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
       el.style.setProperty('--p', p.toFixed(3));
       pars.forEach(function (img) { if (el.contains(img)) img.style.setProperty('--p', p.toFixed(3)); });
     });
-    if (words.length && words[0].offsetParent) {
-      var box = words[0].parentNode.getBoundingClientRect();
-      var prog = clamp((vh * .8 - box.top) / (box.height + vh * .35));
-      var lit = prog * (words.length + 4);
-      words.forEach(function (w, i) { w.style.setProperty('--w', (0.16 + 0.84 * clamp(lit - i)).toFixed(2)); });
-    }
+    words.forEach(function (group) {
+      if (!group.length || !group[0].offsetParent) return;
+      var box = group[0].parentNode.getBoundingClientRect();
+      var prog = clamp((vh * .85 - box.top) / (box.height + vh * .3));
+      var lit = prog * (group.length + 4);
+      group.forEach(function (w, i) { w.style.setProperty('--w', (0.2 + 0.8 * clamp(lit - i)).toFixed(2)); });
+    });
     if (curtain && curtain.offsetParent) {
       var ct = curtain.getBoundingClientRect().top;
       curtain.style.setProperty('--p', ease(clamp((vh - ct) / (vh * .6))).toFixed(3));
@@ -927,8 +938,9 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     var inCase = caseIds.indexOf(h) !== -1;
     var wasCase = !caseView.hidden;
     home.hidden = inCase; caseView.hidden = !inCase;
-    if (inCase && !wasCase && h === 'alice') window.scrollTo(0, 0);
-    if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) t.scrollIntoView({ behavior: 'instant' }); }
+    if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+    if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) { t.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true }); } }
+    if (window.__lenis) window.__lenis.resize();
     frame();
   }
   function route(animate) {
@@ -1053,6 +1065,38 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     window.addEventListener('hashchange', function () { setTimeout(kick, 60); });
     kick();
   })();
+
+
+  // ——— Smooth scroll on desktop ———
+  var lenis = null;
+  if (!reduce && window.Lenis && window.matchMedia('(pointer: fine)').matches) {
+    lenis = new Lenis({ lerp: .1, smoothWheel: true });
+    (function loop(t) { lenis.raf(t); requestAnimationFrame(loop); })(performance.now());
+    window.__lenis = lenis;
+  }
+
+  // ——— Figures count up once, when they come into view ———
+  if (!reduce && 'IntersectionObserver' in window) {
+    var counters = Array.prototype.slice.call(document.querySelectorAll('[data-count]'));
+    var co = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        co.unobserve(e.target);
+        var el = e.target, to = Number(el.dataset.count), t0 = performance.now(), dur = 1400;
+        (function tick(now) {
+          var k = Math.min(1, (now - t0) / dur), eased = 1 - Math.pow(1 - k, 4);
+          el.textContent = Math.round(to * eased);
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }, { threshold: .6 });
+    counters.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0 && el.offsetParent) return;   // already visible: leave the real number
+      el.textContent = '0';
+      co.observe(el);
+    });
+  }
 
   var btn = document.getElementById('copy'), mail = document.getElementById('mail');
   btn.addEventListener('click', function () {
