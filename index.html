@@ -354,21 +354,26 @@ footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid va
 .motion .intro .big.ln { animation-delay: .3s; }
 .intro h1 { transform-origin: 0 100%; }
 
-/* Scroll motion, after Genesis Mission, Uri O'Callaghan and Apple. Each kind of thing has its own
-   behaviour, driven by how far it has come into view (--p, 0→1), so it follows the finger and reverses. */
-/* Text comes into focus, as on Genesis Mission */
-.motion [data-r="text"] { opacity: calc(.12 + var(--p, 1) * .88); filter: blur(calc((1 - var(--p, 1)) * 8px)); transform: translate3d(0, calc((1 - var(--p, 1)) * 18px), 0); }
-/* Section rules draw from the left; the numeral and label follow, as on ndstudio.gov */
-.marker[data-r="rule"] { border-top-color: transparent; position: relative; }
-.marker[data-r="rule"]::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--line); transform-origin: 0 50%; transform: scaleX(var(--p, 1)); }
-.contact .marker[data-r="rule"]::before { background: color-mix(in srgb, var(--cfg) 18%, transparent); }
-.motion .marker[data-r="rule"] > * { opacity: calc(var(--p, 1) * 1.4 - .4); transform: translate3d(0, calc((1 - var(--p, 1)) * 10px), 0); }
-/* Images settle and sharpen, as Uri's products do */
-.motion [data-r="frame"] { transform: scale(calc(.92 + var(--p, 1) * .08)); filter: blur(calc((1 - var(--p, 1)) * 10px)); opacity: calc(.35 + var(--p, 1) * .65); transition: none; }
-/* Project names rise out of their own line, as Apple sets headlines */
+/* Reveals, after Apple and the National Design Studio: each element plays once as it comes into view,
+   with a short travel, a fast exponential ease-out and nothing but transform and opacity.
+   Anything already on screen when the page opens is shown as is. */
+:root { --reveal: cubic-bezier(.16, 1, .3, 1); }
+.reveal-now [data-r], .reveal-now [data-r] > *, .reveal-now [data-r]::before { transition: none !important; }
+.motion [data-r]:not(.in) { transition: none; }
+.motion [data-r] { transition: opacity .7s var(--reveal), transform .9s var(--reveal); transition-delay: var(--delay, 0ms); }
+.motion [data-r="text"]:not(.in) { opacity: 0; transform: translate3d(0, 14px, 0); }
+.motion [data-r="frame"] { transition-duration: 1s, 1.4s; }
+.motion [data-r="frame"]:not(.in) { opacity: 0; transform: scale(1.04); }
 [data-r="mask"] { overflow: hidden; padding-bottom: .08em; }
-[data-r="mask"] > span { display: inline-block; }
-.motion [data-r="mask"] > span { transform: translate3d(0, calc((1 - var(--p, 1)) * 105%), 0); }
+[data-r="mask"] > span { display: inline-block; transition: transform .9s var(--reveal); transition-delay: var(--delay, 0ms); }
+.motion [data-r="mask"]:not(.in) > span { transform: translate3d(0, 105%, 0); }
+.marker[data-r="rule"] { border-top-color: transparent; position: relative; }
+.marker[data-r="rule"]::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--line); transform-origin: 0 50%; transition: transform 1.1s var(--reveal); }
+.contact .marker[data-r="rule"]::before { background: color-mix(in srgb, var(--cfg) 18%, transparent); }
+.motion .marker[data-r="rule"]:not(.in)::before { transform: scaleX(0); }
+.marker[data-r="rule"] > * { transition: opacity .6s var(--reveal) .25s, transform .8s var(--reveal) .25s; }
+.motion .marker[data-r="rule"]:not(.in) > * { opacity: 0; transform: translate3d(0, 8px, 0); }
+.motion .marker[data-r="rule"] { transform: none; opacity: 1; }
 
 /* Featured frame widens to full width as it arrives; phones drift at two speeds */
 .motion [data-expand] { clip-path: inset(0 calc((1 - var(--p, 1)) * 7%) round var(--r-lg)); }
@@ -833,13 +838,6 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
       hero.style.transform = 'scale(' + (1 - q * .06) + ')';
       hero.style.opacity = 1 - q * .7;
     }
-    reveals.forEach(function (el) {
-      var top = el.getBoundingClientRect().top;
-      if (!el.offsetParent) return;
-      var start = vh * .98 - (Number(el.dataset.d) || 0) * vh * .06;
-      var span = el.dataset.r === 'frame' ? vh * .45 : vh * .3;
-      el.style.setProperty('--p', ease(clamp((start - top) / span)).toFixed(3));
-    });
     expands.forEach(function (el) {
       var r = el.getBoundingClientRect();
       var p = ease(clamp((vh - r.top) / (vh * .75)));
@@ -862,6 +860,46 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     }
   }
   function request() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+
+  // Reveals play once. Siblings that arrive together are staggered by 70 ms.
+  (function () {
+    if (reduce || !('IntersectionObserver' in window)) { reveals.forEach(function (el) { el.classList.add('in'); }); return; }
+    var vh = window.innerHeight;
+    var shown = [];
+    reveals.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < vh && r.bottom > 0) shown.push(el);              // already on screen: no animation
+    });
+    root.classList.add('reveal-now');
+    shown.forEach(function (el) { el.classList.add('in'); });
+    void root.offsetHeight;
+    requestAnimationFrame(function () { root.classList.remove('reveal-now'); });
+    var batch = [], flushing = false;
+    function flush() {
+      batch.sort(function (a, b) { return a.getBoundingClientRect().top - b.getBoundingClientRect().top; });
+      batch.forEach(function (el, i) { el.style.setProperty('--delay', Math.min(i, 5) * 70 + 'ms'); el.classList.add('in'); });
+      batch = []; flushing = false;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting || e.target.classList.contains('in')) return;
+        io.unobserve(e.target); batch.push(e.target);
+      });
+      if (batch.length && !flushing) { flushing = true; requestAnimationFrame(flush); }
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+    reveals.forEach(function (el) { if (!el.classList.contains('in')) io.observe(el); });
+    // Elements in a view that opens later (the case page) are observed when it is shown
+    window.addEventListener('hashchange', function () {
+      setTimeout(function () {
+        var h = window.innerHeight;
+        reveals.forEach(function (el) {
+          if (el.classList.contains('in') || !el.offsetParent) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < h && r.bottom > 0) el.classList.add('in');
+        });
+      }, 60);
+    });
+  })();
   window.addEventListener('scroll', request, { passive: true });
   window.addEventListener('resize', request);
   frame();
