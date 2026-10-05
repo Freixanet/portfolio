@@ -533,7 +533,9 @@ nav a.here { color: var(--fg); }
 }
 /* The headline keeps two lines while its size can follow the width; once it reaches its
    smallest size (about 32rem of container) it sets one word per line instead. */
-@container page (width < 32rem) { .intro .giant { font-size: 15cqi; line-height: .92; } }
+/* Phone headline: 56px at default text size on a 375px screen. Part of it is rem, so it grows with the
+   system text size; the rest follows the column. Very large text breaks a long word with a hyphen instead of overflowing. */
+@container page (width < 32rem) { .intro .giant { font-size: calc(1.25rem + 10.75cqi); line-height: .92; hyphens: auto; overflow-wrap: break-word; } }
 @container page (width < 26rem) { .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); } }
 /* The header drops the name when the pill and the action need the row */
 @container page (width < 28rem) { .name .nm { display: none; } }
