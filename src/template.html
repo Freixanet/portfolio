@@ -541,6 +541,8 @@ nav a.here { color: var(--fg); }
   .intro { padding-top: var(--s9); }
   .head { margin-bottom: var(--s7); }
   .contact { margin-inline: calc((1 - var(--p, 1)) * 12px); }
+  /* On a phone the panel ends as a sheet does: its bottom corners use the same large radius as the cards */
+  .contact { border-end-start-radius: var(--r-lg); border-end-end-radius: var(--r-lg); }
   .device { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
