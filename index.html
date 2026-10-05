@@ -627,7 +627,6 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
           </div>
           <div class="pref" role="group" aria-label="Tema" data-aria-t>
             <span class="pref-k">Tema</span>
-            <button type="button" data-theme-set="auto">Auto</button>
             <button type="button" data-theme-set="light">Claro</button>
             <button type="button" data-theme-set="dark">Oscuro</button>
           </div>
@@ -1214,17 +1213,27 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     });
   });
   var themeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-theme-set]'));
+  // No choice saved means the page follows the system; the option shown as active is the one in effect.
+  var sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+  var themeChoice = 'auto';
+  function effective() { return themeChoice === 'auto' ? (sysDark.matches ? 'dark' : 'light') : themeChoice; }
   function applyTheme(t) {
+    themeChoice = t;
     if (t === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
-    themeBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === t)); });
+    themeBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === effective())); });
   }
+  sysDark.addEventListener('change', function () { if (themeChoice === 'auto') applyTheme('auto'); });
   var savedTheme = null;
   try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
   applyTheme(['light', 'dark'].indexOf(savedTheme) !== -1 ? savedTheme : 'auto');
   themeBtns.forEach(function (b) {
     b.addEventListener('click', function () {
-      swap(function () { applyTheme(b.dataset.themeSet); });
-      try { localStorage.setItem('theme', b.dataset.themeSet); } catch (e) {}
+      var t = b.dataset.themeSet;
+      if (t === effective()) return;
+      // Choosing what the system already shows goes back to following the system
+      var next = t === (sysDark.matches ? 'dark' : 'light') ? 'auto' : t;
+      swap(function () { applyTheme(next); });
+      try { if (next === 'auto') localStorage.removeItem('theme'); else localStorage.setItem('theme', next); } catch (e) {}
     });
   });
 
