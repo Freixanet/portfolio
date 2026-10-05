@@ -472,11 +472,14 @@ nav a::after { content: ""; position: absolute; inset-inline: 0; inset-block-end
 nav a.here { color: var(--fg); }
 @media (hover: hover) { nav a.here::after, nav a:hover::after { transform: scaleX(1); } }
 
+/* The index ends in the contact panel: it reaches under the home indicator, and pulling past the end
+   shows the panel's colour, not the page's, so it reads as one piece down to the edge */
+:root:has(#home:not([hidden])) { padding-bottom: 0; background: linear-gradient(var(--bg) 50%, var(--fg) 50%); }
 /* Contact: an inverted panel rises over the page like a curtain, corners flattening as it lands */
 .contact {
   --cbg: var(--fg); --cfg: var(--bg);
   background: var(--cbg); color: var(--cfg);
-  padding-block: var(--section) var(--s6);
+  padding-block: var(--section) calc(var(--s6) + env(safe-area-inset-bottom, 0px));
   border-radius: calc((1 - var(--p, 1)) * 48px) calc((1 - var(--p, 1)) * 48px) 0 0;
   margin-inline: calc((1 - var(--p, 1)) * var(--gutter));
 }
@@ -541,8 +544,9 @@ nav a.here { color: var(--fg); }
   .intro { padding-top: var(--s9); }
   .head { margin-bottom: var(--s7); }
   .contact { margin-inline: calc((1 - var(--p, 1)) * 12px); }
-  /* On a phone the panel lands as a card: top corners settle from 48px to the card radius, bottom ones stay at it */
-  .contact { --cr: calc(var(--r-lg) + (1 - var(--p, 1)) * (48px - var(--r-lg))); border-radius: var(--cr) var(--cr) var(--r-lg) var(--r-lg); }
+  /* On a phone the top corners settle from 48px to the card radius. The bottom edge runs to the screen edge
+     square, so the display's own corners round it, whatever the model (as iOS sheets do). */
+  .contact { --cr: calc(var(--r-lg) + (1 - var(--p, 1)) * (48px - var(--r-lg))); border-radius: var(--cr) var(--cr) 0 0; }
   .device { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
