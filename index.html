@@ -77,7 +77,7 @@ html { accent-color: var(--fg); caret-color: var(--fg); scrollbar-color: color-m
 a:focus-visible, button:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
 em { font-style: normal; }
 
-.wrap { max-width: 1240px; margin-inline: auto; padding-inline: var(--gutter); }
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: var(--gutter); container: page / inline-size; }
 .grid12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
 .left { grid-column: 1 / 7; min-width: 0; }
 .right { grid-column: 7 / 13; min-width: 0; }
@@ -179,7 +179,6 @@ a.project:hover .shots img { transform: translateY(-2%); }
 .intro { padding-block: var(--s9) var(--section); }
 .intro .giant { margin-left: -.04em; font-size: clamp(2.875rem, 8.9vw, 7.625rem); line-height: .92; letter-spacing: -.045em; color: var(--fg); max-width: none; }
 /* On phones the headline stacks one word per line, so each word is set to fill the full measure */
-@media (max-width: 600px) { .intro .giant { font-size: 15vw; line-height: .92; } }
 .side-row { margin-top: var(--s5); row-gap: var(--s5); align-items: start; }
 .side { grid-column: 1 / 7; font-size: var(--t-small); line-height: 1.35; padding-top: .55em; }
 .marker { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); align-items: baseline; border-top: 1px solid var(--line); padding-top: var(--s4); margin-bottom: var(--s9); font-size: var(--t-small); }
@@ -197,7 +196,6 @@ sup { font-size: .62em; line-height: 0; vertical-align: .55em; margin-left: .08e
 .notes li { text-indent: 0; }
 .notes .nt { grid-column: 7 / 13; }
 .mark { vertical-align: -1px; margin-right: 10px; }
-@media (max-width: 480px) { .name .nm { display: none; } }
 header.top .wrap { display: grid; grid-template-columns: 1fr auto 1fr; }
 header.top nav { justify-self: center; }
 .cta { justify-self: end; font-size: var(--t-small); font-weight: 500; }
@@ -225,7 +223,7 @@ header.top .chapter { justify-self: center; display: inline-flex; align-items: c
 .cine img { opacity: .92; }
 
 /* Figures */
-.figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--col-gap); margin-bottom: var(--s9); }
+.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--s6) var(--col-gap); margin-bottom: var(--s9); }
 .figures div { display: grid; gap: var(--s2); align-content: start; }
 .figures b { font-size: clamp(3.5rem, 8vw, 7rem); line-height: .9; letter-spacing: -.05em; font-weight: 500; font-variant-numeric: tabular-nums; }
 .figures span { font-size: var(--t-small); color: var(--muted); max-width: 18em; }
@@ -254,7 +252,7 @@ header.top .chapter { justify-self: center; display: inline-flex; align-items: c
 .pref button[aria-pressed="true"]::before { opacity: 1; transform: none; }
 .pref button:focus-visible { outline: 2px solid var(--cfg); outline-offset: 3px; border-radius: 4px; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .4s; }
-@media (max-width: 860px) {
+@container page (width < 54rem) {
   .foot { grid-template-columns: 1fr auto; }
   .prefs { grid-column: 1 / -1; grid-row: 1; justify-content: flex-start; flex-direction: column; gap: var(--s3); margin-bottom: var(--s4); }
 }
@@ -286,8 +284,24 @@ header.top .chapter { height: 44px; }
   :root:not([data-theme="light"]) { --muted: #b5b5b5; --line: #5a5a5a; }
 }
 
+
+section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
+
+/* Detalles shows real material: app screens and code from the repositories */
+.tiles .tile .frame.shot { aspect-ratio: 1 / 1; overflow: hidden; display: block; }
+.tile .frame.shot::before, .tile .frame.code::before { display: none; }
+.mini { position: absolute; left: 50%; top: 9%; width: 58%; translate: -50% 0; }
+.mini .phone { width: 100%; box-shadow: 0 30px 60px -30px rgba(0,0,0,.35); }
+.mini .screen { position: absolute; inset: 0; opacity: 1; transform: none; }
+.mini .ui .cursor { display: none; }
+.tiles .tile .frame.code { aspect-ratio: 1 / 1; display: block; background: #0d0d0d; color: #e8e8e8; overflow: hidden; }
+.tile .frame.code pre { margin: 0; padding: var(--s5); font: 400 0.75rem/1.6 var(--mono); white-space: pre; overflow: hidden; height: 100%;
+  -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent), linear-gradient(#000 80%, transparent); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000 82%, transparent), linear-gradient(#000 80%, transparent); mask-composite: intersect; }
+.tile .frame.code .c { color: #8c8c8c; }
+.tile .frame.code .file { position: absolute; left: var(--s5); bottom: var(--s4); font: 400 0.75rem/1 var(--mono); color: #a3a3a3; }
+
 /* Craft */
-.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--col-gap); row-gap: 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); column-gap: var(--col-gap); row-gap: 0; }
 .tile { margin-bottom: var(--s7); }
 .tile { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: var(--s3); min-width: 0; }
 .tile .text { align-self: end; }
@@ -381,7 +395,7 @@ footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid va
 @keyframes tap { 0%, 40% { opacity: 0; transform: translate(150px, 210px) scale(1.4); } 55% { opacity: 1; transform: translate(150px, 210px) scale(1); } 70% { transform: translate(150px, 210px) scale(.8); } 100% { opacity: 0; transform: translate(150px, 210px) scale(1); } }
 
 /* Case study: four blocks on the two half lines */
-.facts4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s8) var(--col-gap); }
+.facts4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--s8) var(--col-gap); }
 .facts4 > div { display: grid; gap: var(--s3); align-content: start; min-width: 0; }
 .facts4 h3 { font-size: var(--t-body); font-weight: 500; }
 .facts4 p, .facts4 li { max-width: 30em; }
@@ -390,7 +404,7 @@ footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid va
 .links { margin-top: var(--s8); display: flex; flex-wrap: wrap; gap: var(--s3); }
 
 /* Architecture: three layers on columns 1, 5 and 9 */
-.layers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--col-gap); }
+.layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--col-gap); }
 .layer { display: flex; flex-direction: column; gap: var(--s3); min-width: 0; padding-top: var(--s5); border-top: 1px solid var(--fg); }
 .layer .label { display: flex; justify-content: space-between; gap: var(--s2); }
 .layer h3 { font-family: var(--display); font-size: var(--t-h3); line-height: 1.05; letter-spacing: -.01em; }
@@ -478,8 +492,10 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
 ::view-transition-group(alice-title) { animation-duration: .7s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }
 
-@media (max-width: 860px) {
-  .left, .right, .intro h1, .intro .lead, .side { grid-column: 1 / -1; }
+/* Breakpoints come from the content: two half-columns need about 26rem of text each,
+   so below 54rem of container width they stack. Grids above size themselves (auto-fit). */
+@container page (width < 54rem) {
+  .left, .right, .side, .grid12 > .left, .grid12 > .right { grid-column: 1 / -1; }
   .marker .num { grid-column: 1 / 3; }
   .marker h2 { grid-column: 3 / -1; }
   .marker .aside { grid-column: 3 / -1; margin-top: var(--s2); }
@@ -487,35 +503,30 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
   .notes .nt { grid-column: 3 / -1; }
   .notes li::before { grid-column: 1 / 3; }
   .chapter-name { min-width: 0; }
-  .figures { grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
   .play { height: 38px; font-size: 0.75rem; }
   .play i { width: 28px; height: 28px; }
-  .intro { padding-top: var(--s9); }
   .signal { height: 72px; margin-block: 0; }
   .shots { aspect-ratio: 4 / 3; gap: var(--s4); padding-top: var(--s6); }
   .shots img { width: 36%; border-radius: 22px 22px 0 0; }
-  .cards, .facts4, .layers { grid-template-columns: minmax(0, 1fr); }
   .row-p h4, .row-p p, .row-p .label { grid-column: 1 / -1; justify-self: start; text-align: left; }
-  .cards { gap: var(--s8); margin-top: var(--s8); }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6) var(--s4); }
-  .head { margin-bottom: var(--s7); }
   .stage { display: none; }
   .step, .step:first-child { min-height: 0; padding-block: var(--s7); }
   .step .inline-phone { display: block; margin-top: var(--s4); }
   .step .inline-phone .phone { width: min(280px, 100%); margin-inline: auto; }
   .step .inline-phone .screen { opacity: 1; transform: none; }
-  nav { gap: var(--s4); }
-}
-@media (max-width: 480px) {
-  .tiles { grid-template-columns: minmax(0, 1fr); }
-  .tile .frame { aspect-ratio: 3 / 2; }
-  .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); }
-  nav a:nth-child(3) { display: none; }
-}
-@media (max-width: 860px) {
   .motion .story .step:not(.on) h3, .motion .story .step:not(.on) p { opacity: 1; }
-  .device { transform: none; }
+}
+/* The headline keeps two lines while its size can follow the width; once it reaches its
+   smallest size (about 32rem of container) it sets one word per line instead. */
+@container page (width < 32rem) { .intro .giant { font-size: 15cqi; line-height: .92; } }
+@container page (width < 26rem) { .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); } }
+/* The header drops the name when the pill and the action need the row */
+@container page (width < 28rem) { .name .nm { display: none; } }
+@media (width < 54rem) {
+  .intro { padding-top: var(--s9); }
+  .head { margin-bottom: var(--s7); }
   .contact { margin-inline: calc((1 - var(--p, 1)) * 12px); }
+  .device { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: opacity .2s ease !important; transform: none !important; }
@@ -594,34 +605,71 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
           <p>Convierte notas, vídeos de YouTube o PDFs en una idea central y unos pocos pasos con tiempo.</p>
           <span class="label">App móvil con IA</span>
         </div>
-        <p class="index-note"><span class="pill">casos en preparación</span></p>
       </div>
     </section>
 
-    <section id="craft" class="section wrap">
+    <section id="detalles" class="section wrap">
       <div class="marker" data-r="rule">
         <span class="num">II</span>
         <h2>Detalles</h2>
-        <p class="aside">Piezas pequeñas de varios proyectos que muestran cómo trabajo.</p>
+        <p class="aside">Piezas pequeñas de varios proyectos que muestran cómo trabajo: pantallas y código real.</p>
       </div>
       <div class="tiles">
-        <div class="tile"><div class="text"><h3>El navegador, en el chat</h3><span class="label">Alice</span></div><div class="frame" data-r="frame"><span class="pill">vídeo de 6&nbsp;s</span></div></div>
-        <div class="tile"><div class="text"><h3>Anonimizar antes de enviar</h3><span class="label">Lexia</span></div><div class="frame" data-r="frame"><span class="pill">código</span></div></div>
-        <div class="tile"><div class="text"><h3>Dos modos, una web</h3><span class="label">Enyarte</span></div><div class="frame" data-r="frame"><span class="pill">vídeo de 8&nbsp;s</span></div></div>
-        <div class="tile"><div class="text"><h3>Un juez que exige pruebas</h3><span class="label">Alice</span></div><div class="frame" data-r="frame"><span class="pill">código</span></div></div>
-        <div class="tile"><div class="text"><h3>La tarjeta, fuera del chat</h3><span class="label">Alice</span></div><div class="frame" data-r="frame"><span class="pill">vídeo de 5&nbsp;s</span></div></div>
-        <div class="tile"><div class="text"><h3>De un PDF a tres pasos</h3><span class="label">Action Maps</span></div><div class="frame" data-r="frame"><span class="pill">vídeo de 6&nbsp;s</span></div></div>
+        <div class="tile"><div class="text"><h3>El navegador, en el chat</h3><span class="label">Alice</span></div><div class="frame shot" data-r="frame"><div class="mini" aria-hidden="true"><div class="phone"><div class="screen-set"><div class="screen on"><div class="ui">
+              <div class="bar"><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 4.5h10M2 9.5h10" stroke="#161614" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3.5 4 10.5M10 3.5 9 10.5" stroke="#161614" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+              <div class="me">Búscame vuelos a Palma el 12 de octubre por menos de 100&nbsp;€</div>
+              <div class="her">Estoy en la web de la aerolínea. Hay tres por debajo de 100&nbsp;€:</div>
+              <div class="live">
+                <div class="url"><span>aerolinea.com/vuelos</span><i>En directo</i></div>
+                <div class="page">
+                  <div class="row"><span>07:05 → 07:55</span><b>48&nbsp;€</b></div>
+                  <div class="row sel"><span>11:40 → 12:30</span><b>62&nbsp;€</b></div>
+                  <div class="row"><span>19:15 → 20:05</span><b>89&nbsp;€</b></div>
+                </div>
+                <div class="hint">Toca para tomar el control</div>
+              </div>
+              <span class="cursor"></span>
+              <div class="composer">Habla con Alice…</div>
+            </div></div></div></div></div></div></div>
+        <div class="tile"><div class="text"><h3>Anonimizar antes de enviar</h3><span class="label">Lexia</span></div><div class="frame code" data-r="frame"><pre><code>const USER_PLACEHOLDER = &#x27;[Usuario]&#x27;;
+const DOC_PLACEHOLDER = &#x27;[documento]&#x27;;
+
+<span class="c">/** Patrones que revelan DNI/NIF u otro documento de identidad. */</span>
+const DOC_PATTERNS = [
+  /\b(DNI|NIF|NIE|documento de identidad):\s*[A-Z0-9\-]{4,}/gi,
+  /\b(mi DNI es|mi NIF es|mi NIE es)\s+[A-Z0-9\-]{4,}/gi,
+];</code></pre><span class="file">src/utils/pseudonymize.ts</span></div></div>
+        <div class="tile"><div class="text"><h3>La tarjeta, fuera del chat</h3><span class="label">Alice</span></div><div class="frame shot" data-r="frame"><div class="mini" aria-hidden="true"><div class="phone"><div class="screen-set"><div class="screen on"><div class="ui">
+              <div class="bar"><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 4.5h10M2 9.5h10" stroke="#161614" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="dot"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3.5 4 10.5M10 3.5 9 10.5" stroke="#161614" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+              <div class="her">Todo listo. Con el código <b>OTONO10</b> baja 7,60&nbsp;€.</div>
+              <div class="card">
+                <div class="line"><span>Tienda</span><b>tienda.es</b></div>
+                <div class="line"><span>Envío</span><b>Mañana, a casa</b></div>
+                <div class="line"><span>Tarjeta</span><b>Visa&nbsp;···4242</b></div>
+                <div class="total"><span>Total</span><b>68,40&nbsp;€</b></div>
+                <div class="pay"><span class="no">Ahora no</span><span class="yes">Pagar</span></div>
+              </div>
+              <div class="her" style="color:#8d8b84;font-size:11px">Alice pagará en esta web con tu Visa&nbsp;···4242.</div>
+              <div class="composer">Habla con Alice…</div>
+            </div></div></div></div></div></div></div>
+        <div class="tile"><div class="text"><h3>Nunca pagar dos veces</h3><span class="label">Alice</span></div><div class="frame code" data-r="frame"><pre><code>def _guard_repeat_payment(tool_name=None, args=None, session_id=&quot;&quot;, **_):
+<span class="c">    &quot;&quot;&quot;One payment per order: an unsettled payment on the same shop</span>
+<span class="c">    blocks the fill; a paid or unknown one goes through the approval card.&quot;&quot;&quot;</span>
+    meta = _card_fill(tool_name, args)
+    if meta is None:
+        return None
+    site = _purchases().merchant(_open_tabs(), meta.origin or &quot;&quot;, PAYMENT_GATEWAYS)
+    return _purchases().guard(_hermes_root(), site, session_id or &quot;&quot;)</code></pre><span class="file">hermes-plugin/__init__.py</span></div></div>
       </div>
     </section>
 
-    <section id="sobre" class="section wrap">
+    <section id="sobre-mi" class="section wrap">
       <div class="marker" data-r="rule">
         <span class="num">III</span>
         <h2>Sobre mí</h2>
       </div>
       <div class="grid12">
       <div class="right">
-        <p class="slot">Hueco: dos o tres frases tuyas. Qué te mueve, cómo trabajas y qué equipo buscas.</p>
         <dl class="facts">
           <div><dt class="label">Lenguajes</dt><dd>Swift, TypeScript, Python</dd></div>
           <div><dt class="label">Hago</dt><dd>Apps de iPhone, webs, servidores y agentes</dd></div>
@@ -854,7 +902,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
 
 
   // ——— Languages: Catalan, Spanish, English. Spanish is the source text in the page. ———
-  var I18N = {"Escríbeme": {"ca": "Escriu-me", "en": "Get in touch"}, "Inicio": {"ca": "Inici", "en": "Home"}, "Trabajo": {"ca": "Feina", "en": "Work"}, "Detalles": {"ca": "Detalls", "en": "Details"}, "Sobre mí": {"ca": "Sobre mi", "en": "About"}, "Contacto": {"ca": "Contacte", "en": "Contact"}, "La historia": {"ca": "La història", "en": "The story"}, "Cómo está hecha": {"ca": "Com està feta", "en": "How it’s built"}, "Construyo productos completos.": {"ca": "Construeixo productes complets.", "en": "I build complete products."}, "Swift, TypeScript<br>y Python": {"ca": "Swift, TypeScript<br>i Python", "en": "Swift, TypeScript<br>and Python"}, "Apps de iPhone, webs, y los servidores y agentes que hay detrás. Desde Barcelona.": {"ca": "Apps d’iPhone, webs, i els servidors i agents que hi ha al darrere. Des de Barcelona.", "en": "iPhone apps, websites, and the servers and agents behind them. From Barcelona."}, "Cinco proyectos. El primero lo uso cada día.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>": {"ca": "Cinc projectes. El primer el faig servir cada dia.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>", "en": "Five projects. I use the first one every day.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>"}, "Demo en vídeo, pendiente": {"ca": "Demo en vídeo, pendent", "en": "Video demo, coming soon"}, "Un agente personal que manejas desde el iPhone y que trabaja en tu propio Mac. Busca, rellena y compra, y se para antes de pagar.": {"ca": "Un agent personal que fas servir des de l’iPhone i que treballa al teu propi Mac. Busca, omple i compra, i s’atura abans de pagar.", "en": "A personal agent you run from your iPhone that works on your own Mac. It searches, fills in and buys, and stops before paying."}, "iPhone, web y agentes": {"ca": "iPhone, web i agents", "en": "iPhone, web and agents"}, "Ver el caso": {"ca": "Veure el cas", "en": "See the case"}, "Más proyectos": {"ca": "Més projectes", "en": "More projects"}, "Chat legal para España que quita tus datos personales del texto en el navegador, antes de enviarlo.": {"ca": "Xat legal per a Espanya que treu les teves dades personals del text al navegador, abans d’enviar-lo.", "en": "A legal chat for Spain that strips your personal data from the text in the browser, before sending it."}, "Web con IA": {"ca": "Web amb IA", "en": "Web with AI"}, "Un escáner de documentos pensado para sentirse tranquilo. Prototipo con cada decisión documentada.": {"ca": "Un escàner de documents pensat per sentir-se tranquil. Prototip amb cada decisió documentada.", "en": "A document scanner designed to feel calm. A prototype with every decision documented."}, "App de iPhone": {"ca": "App d’iPhone", "en": "iPhone app"}, "La web de una pintora: un catálogo para vender obra y un modo que cuenta su historia, en dos idiomas.": {"ca": "La web d’una pintora: un catàleg per vendre obra i un mode que explica la seva història, en dos idiomes.", "en": "A painter’s website: a catalogue to sell her work and a mode that tells her story, in two languages."}, "Web para un cliente": {"ca": "Web per a un client", "en": "Client website"}, "Convierte notas, vídeos de YouTube o PDFs en una idea central y unos pocos pasos con tiempo.": {"ca": "Converteix notes, vídeos de YouTube o PDF en una idea central i uns quants passos amb temps.", "en": "Turns notes, YouTube videos or PDFs into one core idea and a few timed steps."}, "App móvil con IA": {"ca": "App mòbil amb IA", "en": "Mobile app with AI"}, "casos en preparación": {"ca": "casos en preparació", "en": "case studies in progress"}, "Piezas pequeñas de varios proyectos que muestran cómo trabajo.": {"ca": "Peces petites de diversos projectes que mostren com treballo.", "en": "Small pieces from several projects that show how I work."}, "El navegador, en el chat": {"ca": "El navegador, al xat", "en": "The browser, in the chat"}, "Anonimizar antes de enviar": {"ca": "Anonimitzar abans d’enviar", "en": "Anonymise before sending"}, "Dos modos, una web": {"ca": "Dos modes, una web", "en": "Two modes, one site"}, "Un juez que exige pruebas": {"ca": "Un jutge que exigeix proves", "en": "A judge that demands proof"}, "La tarjeta, fuera del chat": {"ca": "La targeta, fora del xat", "en": "The card, out of the chat"}, "De un PDF a tres pasos": {"ca": "D’un PDF a tres passos", "en": "From a PDF to three steps"}, "vídeo de 6&nbsp;s": {"ca": "vídeo de 6&nbsp;s", "en": "6&nbsp;s video"}, "vídeo de 8&nbsp;s": {"ca": "vídeo de 8&nbsp;s", "en": "8&nbsp;s video"}, "vídeo de 5&nbsp;s": {"ca": "vídeo de 5&nbsp;s", "en": "5&nbsp;s video"}, "código": {"ca": "codi", "en": "code"}, "Hueco: dos o tres frases tuyas. Qué te mueve, cómo trabajas y qué equipo buscas.": {"ca": "Espai reservat: dues o tres frases teves. Què et mou, com treballes i quin equip busques.", "en": "Placeholder: two or three sentences of yours. What drives you, how you work and what team you’re after."}, "Lenguajes": {"ca": "Llenguatges", "en": "Languages"}, "Hago": {"ca": "Faig", "en": "I make"}, "Base": {"ca": "Base", "en": "Based in"}, "Apps de iPhone, webs, servidores y agentes": {"ca": "Apps d’iPhone, webs, servidors i agents", "en": "iPhone apps, websites, servers and agents"}, "Barcelona, o en remoto": {"ca": "Barcelona, o en remot", "en": "Barcelona, or remote"}, "Con mi propio Hermes, en mi iPhone y en mi Mac.": {"ca": "Amb el meu propi Hermes, al meu iPhone i al meu Mac.", "en": "With my own Hermes, on my iPhone and my Mac."}, "¿Hacemos algo juntos?": {"ca": "Fem alguna cosa junts?", "en": "Shall we build something?"}, "Copiar": {"ca": "Copia", "en": "Copy"}, "Copiado": {"ca": "Copiat", "en": "Copied"}, "Idioma": {"ca": "Idioma", "en": "Language"}, "Tema": {"ca": "Tema", "en": "Theme"}, "Auto": {"ca": "Auto", "en": "Auto"}, "Claro": {"ca": "Clar", "en": "Light"}, "Oscuro": {"ca": "Fosc", "en": "Dark"}, "Volver al trabajo": {"ca": "Tornar a la feina", "en": "Back to work"}, "Tu propio agente, en el iPhone.": {"ca": "El teu propi agent, a l’iPhone.", "en": "Your own agent, on your iPhone."}, "Swift y SwiftUI": {"ca": "Swift i SwiftUI", "en": "Swift and SwiftUI"}, "React y TypeScript": {"ca": "React i TypeScript", "en": "React and TypeScript"}, "Servidor y agentes": {"ca": "Servidor i agents", "en": "Server and agents"}, "Estado": {"ca": "Estat", "en": "Status"}, "En uso diario": {"ca": "En ús diari", "en": "In daily use"}, "En el móvil, un agente vive dentro de un bot de mensajería. Sirve para preguntas. Pero cuando compra, inicia sesión o necesita tu permiso a mitad de tarea, hace falta otra cosa: ver lo que hace, y decidir tú.": {"ca": "Al mòbil, un agent viu dins d’un bot de missatgeria. Serveix per a preguntes. Però quan compra, inicia sessió o necessita el teu permís a mitja tasca, cal una altra cosa: veure què fa, i decidir tu.", "en": "On a phone, an agent lives inside a messaging bot. That’s fine for questions. But when it buys something, signs in or needs your permission halfway through, you need something else: to see what it does, and to decide."}, "Le pides algo. Como a una persona.": {"ca": "Li demanes alguna cosa. Com a una persona.", "en": "You ask it for something. Like you’d ask a person."}, "Un chat nativo con respuestas en directo, adjuntos y una voz que puedes interrumpir hablando. <b>Una cosa cada vez.</b>": {"ca": "Un xat natiu amb respostes en directe, adjunts i una veu que pots interrompre parlant. <b>Una cosa cada vegada.</b>", "en": "A native chat with live replies, attachments and a voice you can interrupt by speaking. <b>One thing at a time.</b>"}, "Ves lo que hace. Mientras lo hace.": {"ca": "Veus què fa. Mentre ho fa.", "en": "You see what it does. While it does it."}, "La página en la que está el agente aparece en el chat, en directo. <b>La tocas y tomas el control;</b> al acabar, se la devuelves.": {"ca": "La pàgina on és l’agent apareix al xat, en directe. <b>La toques i prens el control;</b> quan acabes, l’hi tornes.", "en": "The page the agent is on appears in the chat, live. <b>Tap it to take over;</b> when you’re done, hand it back."}, "Paga cuando tú dices «Pagar».": {"ca": "Paga quan tu dius «Pagar».", "en": "It pays when you say “Pay”."}, "Llena el carrito, la dirección y el envío, prueba los códigos de descuento y se para antes de pagar. <b>La tarjeta nunca pasa por el chat.</b>": {"ca": "Omple el cistell, l’adreça i l’enviament, prova els codis de descompte i s’atura abans de pagar. <b>La targeta mai no passa pel xat.</b>", "en": "It fills in the basket, the address and the delivery, tries the discount codes and stops before paying. <b>The card never goes through the chat.</b>"}, "Agentes, notas, rutinas. A un gesto.": {"ca": "Agents, notes, rutines. A un gest.", "en": "Agents, notes, routines. One gesture away."}, "Resumen de mañana y de noche, agenda, objetivos que se miden solos y avisos al llegar a un sitio, sin compartir dónde estás.": {"ca": "Resum del matí i del vespre, agenda, objectius que es mesuren sols i avisos en arribar a un lloc, sense compartir on ets.", "en": "Morning and evening summaries, calendar, goals that measure themselves and reminders when you arrive somewhere, without sharing where you are."}, "Por qué existe, qué decidí y qué me costó.": {"ca": "Per què existeix, què vaig decidir i què em va costar.", "en": "Why it exists, what I decided and what was hard."}, "El problema": {"ca": "El problema", "en": "The problem"}, "Hermes es un agente abierto muy capaz, pero en el móvil se usa a través de un bot de mensajería. Sirve para preguntas. Se queda corto cuando el agente compra, inicia sesión en una web o necesita tu permiso a mitad de tarea.": {"ca": "Hermes és un agent obert molt capaç, però al mòbil es fa servir a través d’un bot de missatgeria. Serveix per a preguntes. Es queda curt quan l’agent compra, inicia sessió en una web o necessita el teu permís a mitja tasca.", "en": "Hermes is a very capable open agent, but on a phone you reach it through a messaging bot. That works for questions. It falls short when the agent buys something, signs in to a site or needs your permission halfway through a task."}, "Las decisiones": {"ca": "Les decisions", "en": "The decisions"}, "App nativa en SwiftUI, no una web dentro de una app.": {"ca": "App nativa en SwiftUI, no una web dins d’una app.", "en": "A native SwiftUI app, not a website inside an app."}, "Ningún secreto en el chat: contraseñas, códigos y tarjetas van por hojas seguras a tu Mac.": {"ca": "Cap secret al xat: contrasenyes, codis i targetes van per fulls segurs al teu Mac.", "en": "No secrets in the chat: passwords, codes and cards go through secure sheets to your Mac."}, "Un paso irreversible, como pagar, espera un «Pagar» explícito.": {"ca": "Un pas irreversible, com pagar, espera un «Pagar» explícit.", "en": "An irreversible step, like paying, waits for an explicit “Pay”."}, "Hermes oficial, sin parches: lo que falta va en un plugin propio.": {"ca": "Hermes oficial, sense pedaços: el que falta va en un plugin propi.", "en": "Official Hermes, unpatched: anything missing goes in a plugin of my own."}, "Lo difícil": {"ca": "El difícil", "en": "The hard part"}, "Comprar de verdad. Cada tienda es distinta y el pago pasa por la página del banco. Alice distingue un pago confirmado de uno rechazado o sin confirmar, y bloquea un segundo pago en la misma tienda hasta saber qué pasó con el primero.": {"ca": "Comprar de debò. Cada botiga és diferent i el pagament passa per la pàgina del banc. Alice distingeix un pagament confirmat d’un de rebutjat o sense confirmar, i bloqueja un segon pagament a la mateixa botiga fins a saber què ha passat amb el primer.", "en": "Buying for real. Every shop is different and payment goes through the bank’s page. Alice tells a confirmed payment from a declined or unconfirmed one, and blocks a second payment at the same shop until it knows what happened to the first."}, "Dónde está hoy": {"ca": "On és avui", "en": "Where it is today"}, "La uso cada día para el chat, la agenda, los objetivos y los resúmenes. Las compras llegan hasta el pago y ya han destapado errores reales que he corregido. Todavía no la dejaría comprar sin supervisión.": {"ca": "La faig servir cada dia per al xat, l’agenda, els objectius i els resums. Les compres arriben fins al pagament i ja han destapat errors reals que he corregit. Encara no la deixaria comprar sense supervisió.", "en": "I use it every day for chat, calendar, goals and summaries. Purchases go as far as payment and have already surfaced real bugs that I’ve fixed. I wouldn’t yet let it buy unsupervised."}, "Ver el código": {"ca": "Veure el codi", "en": "See the code"}, "Tres capas, de punta a punta. Una decisión importante en cada una.": {"ca": "Tres capes, de punta a punta. Una decisió important en cadascuna.", "en": "Three layers, end to end. One important decision in each."}, "archivos de Swift en la app de iPhone": {"ca": "fitxers de Swift a l’app d’iPhone", "en": "Swift files in the iPhone app"}, "archivos de TypeScript en la web": {"ca": "fitxers de TypeScript a la web", "en": "TypeScript files in the web app"}, "archivos de Python en el servidor y los agentes": {"ca": "fitxers de Python al servidor i als agents", "en": "Python files in the server and agents"}, "iPhone y web": {"ca": "iPhone i web", "en": "iPhone and web"}, "Swift y TypeScript, unos 640 archivos": {"ca": "Swift i TypeScript, uns 640 fitxers", "en": "Swift and TypeScript, about 640 files"}, "Contraseñas, códigos y tarjetas se escriben en hojas seguras que van directas a tu Mac. El chat solo sabe que se guardaron.": {"ca": "Contrasenyes, codis i targetes s’escriuen en fulls segurs que van directes al teu Mac. El xat només sap que s’han desat.", "en": "Passwords, codes and cards are typed into secure sheets that go straight to your Mac. The chat only learns that they were saved."}, "Hermes en tu Mac": {"ca": "Hermes al teu Mac", "en": "Hermes on your Mac"}, "Python, unos 150 archivos": {"ca": "Python, uns 150 fitxers", "en": "Python, about 150 files"}, "Hermes oficial, sin parches; lo que falta va en un plugin propio. Un registro de pagos impide cobrar dos veces en la misma tienda.": {"ca": "Hermes oficial, sense pedaços; el que falta va en un plugin propi. Un registre de pagaments impedeix cobrar dues vegades a la mateixa botiga.", "en": "Official Hermes, unpatched; what’s missing goes in my own plugin. A payment ledger prevents charging twice at the same shop."}, "Agentes y modelo": {"ca": "Agents i model", "en": "Agents and model"}, "Un modelo juez y evaluaciones": {"ca": "Un model jutge i avaluacions", "en": "A judge model and evals"}, "Un segundo modelo hace de juez: devuelve al agente al trabajo si se para, y solo acepta «hecho» con una prueba.": {"ca": "Un segon model fa de jutge: torna l’agent a la feina si s’atura, i només accepta «fet» amb una prova.", "en": "A second model acts as judge: it sends the agent back to work if it stops, and only accepts “done” with proof."}, "Secciones": {"ca": "Seccions", "en": "Sections"}, "Notas": {"ca": "Notes", "en": "Notes"}, "Alice: inicio del chat": {"ca": "Alice: inici del xat", "en": "Alice: chat home"}, "Alice: menú lateral": {"ca": "Alice: menú lateral", "en": "Alice: side menu"}, "Marc Freixanet, Barcelona": {"ca": "Marc Freixanet, Barcelona", "en": "Marc Freixanet, Barcelona"}, "Saltar al contenido": {"ca": "Salta al contingut", "en": "Skip to content"}};
+  var I18N = {"Escríbeme": {"ca": "Escriu-me", "en": "Get in touch"}, "Inicio": {"ca": "Inici", "en": "Home"}, "Trabajo": {"ca": "Feina", "en": "Work"}, "Detalles": {"ca": "Detalls", "en": "Details"}, "Sobre mí": {"ca": "Sobre mi", "en": "About"}, "Contacto": {"ca": "Contacte", "en": "Contact"}, "La historia": {"ca": "La història", "en": "The story"}, "Cómo está hecha": {"ca": "Com està feta", "en": "How it’s built"}, "Construyo productos completos.": {"ca": "Construeixo productes complets.", "en": "I build complete products."}, "Swift, TypeScript<br>y Python": {"ca": "Swift, TypeScript<br>i Python", "en": "Swift, TypeScript<br>and Python"}, "Apps de iPhone, webs, y los servidores y agentes que hay detrás. Desde Barcelona.": {"ca": "Apps d’iPhone, webs, i els servidors i agents que hi ha al darrere. Des de Barcelona.", "en": "iPhone apps, websites, and the servers and agents behind them. From Barcelona."}, "Cinco proyectos. El primero lo uso cada día.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>": {"ca": "Cinc projectes. El primer el faig servir cada dia.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>", "en": "Five projects. I use the first one every day.<sup><a href=\"#nota-1\" class=\"fn\">1</a></sup>"}, "Demo en vídeo, pendiente": {"ca": "Demo en vídeo, pendent", "en": "Video demo, coming soon"}, "Un agente personal que manejas desde el iPhone y que trabaja en tu propio Mac. Busca, rellena y compra, y se para antes de pagar.": {"ca": "Un agent personal que fas servir des de l’iPhone i que treballa al teu propi Mac. Busca, omple i compra, i s’atura abans de pagar.", "en": "A personal agent you run from your iPhone that works on your own Mac. It searches, fills in and buys, and stops before paying."}, "iPhone, web y agentes": {"ca": "iPhone, web i agents", "en": "iPhone, web and agents"}, "Ver el caso": {"ca": "Veure el cas", "en": "See the case"}, "Más proyectos": {"ca": "Més projectes", "en": "More projects"}, "Chat legal para España que quita tus datos personales del texto en el navegador, antes de enviarlo.": {"ca": "Xat legal per a Espanya que treu les teves dades personals del text al navegador, abans d’enviar-lo.", "en": "A legal chat for Spain that strips your personal data from the text in the browser, before sending it."}, "Web con IA": {"ca": "Web amb IA", "en": "Web with AI"}, "Un escáner de documentos pensado para sentirse tranquilo. Prototipo con cada decisión documentada.": {"ca": "Un escàner de documents pensat per sentir-se tranquil. Prototip amb cada decisió documentada.", "en": "A document scanner designed to feel calm. A prototype with every decision documented."}, "App de iPhone": {"ca": "App d’iPhone", "en": "iPhone app"}, "La web de una pintora: un catálogo para vender obra y un modo que cuenta su historia, en dos idiomas.": {"ca": "La web d’una pintora: un catàleg per vendre obra i un mode que explica la seva història, en dos idiomes.", "en": "A painter’s website: a catalogue to sell her work and a mode that tells her story, in two languages."}, "Web para un cliente": {"ca": "Web per a un client", "en": "Client website"}, "Convierte notas, vídeos de YouTube o PDFs en una idea central y unos pocos pasos con tiempo.": {"ca": "Converteix notes, vídeos de YouTube o PDF en una idea central i uns quants passos amb temps.", "en": "Turns notes, YouTube videos or PDFs into one core idea and a few timed steps."}, "App móvil con IA": {"ca": "App mòbil amb IA", "en": "Mobile app with AI"}, "casos en preparación": {"ca": "casos en preparació", "en": "case studies in progress"}, "Piezas pequeñas de varios proyectos que muestran cómo trabajo.": {"ca": "Peces petites de diversos projectes que mostren com treballo.", "en": "Small pieces from several projects that show how I work."}, "El navegador, en el chat": {"ca": "El navegador, al xat", "en": "The browser, in the chat"}, "Anonimizar antes de enviar": {"ca": "Anonimitzar abans d’enviar", "en": "Anonymise before sending"}, "Dos modos, una web": {"ca": "Dos modes, una web", "en": "Two modes, one site"}, "Un juez que exige pruebas": {"ca": "Un jutge que exigeix proves", "en": "A judge that demands proof"}, "La tarjeta, fuera del chat": {"ca": "La targeta, fora del xat", "en": "The card, out of the chat"}, "De un PDF a tres pasos": {"ca": "D’un PDF a tres passos", "en": "From a PDF to three steps"}, "vídeo de 6&nbsp;s": {"ca": "vídeo de 6&nbsp;s", "en": "6&nbsp;s video"}, "vídeo de 8&nbsp;s": {"ca": "vídeo de 8&nbsp;s", "en": "8&nbsp;s video"}, "vídeo de 5&nbsp;s": {"ca": "vídeo de 5&nbsp;s", "en": "5&nbsp;s video"}, "código": {"ca": "codi", "en": "code"}, "Hueco: dos o tres frases tuyas. Qué te mueve, cómo trabajas y qué equipo buscas.": {"ca": "Espai reservat: dues o tres frases teves. Què et mou, com treballes i quin equip busques.", "en": "Placeholder: two or three sentences of yours. What drives you, how you work and what team you’re after."}, "Lenguajes": {"ca": "Llenguatges", "en": "Languages"}, "Hago": {"ca": "Faig", "en": "I make"}, "Base": {"ca": "Base", "en": "Based in"}, "Apps de iPhone, webs, servidores y agentes": {"ca": "Apps d’iPhone, webs, servidors i agents", "en": "iPhone apps, websites, servers and agents"}, "Barcelona, o en remoto": {"ca": "Barcelona, o en remot", "en": "Barcelona, or remote"}, "Con mi propio Hermes, en mi iPhone y en mi Mac.": {"ca": "Amb el meu propi Hermes, al meu iPhone i al meu Mac.", "en": "With my own Hermes, on my iPhone and my Mac."}, "¿Hacemos algo juntos?": {"ca": "Fem alguna cosa junts?", "en": "Shall we build something?"}, "Copiar": {"ca": "Copia", "en": "Copy"}, "Copiado": {"ca": "Copiat", "en": "Copied"}, "Idioma": {"ca": "Idioma", "en": "Language"}, "Tema": {"ca": "Tema", "en": "Theme"}, "Auto": {"ca": "Auto", "en": "Auto"}, "Claro": {"ca": "Clar", "en": "Light"}, "Oscuro": {"ca": "Fosc", "en": "Dark"}, "Volver al trabajo": {"ca": "Tornar a la feina", "en": "Back to work"}, "Tu propio agente, en el iPhone.": {"ca": "El teu propi agent, a l’iPhone.", "en": "Your own agent, on your iPhone."}, "Swift y SwiftUI": {"ca": "Swift i SwiftUI", "en": "Swift and SwiftUI"}, "React y TypeScript": {"ca": "React i TypeScript", "en": "React and TypeScript"}, "Servidor y agentes": {"ca": "Servidor i agents", "en": "Server and agents"}, "Estado": {"ca": "Estat", "en": "Status"}, "En uso diario": {"ca": "En ús diari", "en": "In daily use"}, "En el móvil, un agente vive dentro de un bot de mensajería. Sirve para preguntas. Pero cuando compra, inicia sesión o necesita tu permiso a mitad de tarea, hace falta otra cosa: ver lo que hace, y decidir tú.": {"ca": "Al mòbil, un agent viu dins d’un bot de missatgeria. Serveix per a preguntes. Però quan compra, inicia sessió o necessita el teu permís a mitja tasca, cal una altra cosa: veure què fa, i decidir tu.", "en": "On a phone, an agent lives inside a messaging bot. That’s fine for questions. But when it buys something, signs in or needs your permission halfway through, you need something else: to see what it does, and to decide."}, "Le pides algo. Como a una persona.": {"ca": "Li demanes alguna cosa. Com a una persona.", "en": "You ask it for something. Like you’d ask a person."}, "Un chat nativo con respuestas en directo, adjuntos y una voz que puedes interrumpir hablando. <b>Una cosa cada vez.</b>": {"ca": "Un xat natiu amb respostes en directe, adjunts i una veu que pots interrompre parlant. <b>Una cosa cada vegada.</b>", "en": "A native chat with live replies, attachments and a voice you can interrupt by speaking. <b>One thing at a time.</b>"}, "Ves lo que hace. Mientras lo hace.": {"ca": "Veus què fa. Mentre ho fa.", "en": "You see what it does. While it does it."}, "La página en la que está el agente aparece en el chat, en directo. <b>La tocas y tomas el control;</b> al acabar, se la devuelves.": {"ca": "La pàgina on és l’agent apareix al xat, en directe. <b>La toques i prens el control;</b> quan acabes, l’hi tornes.", "en": "The page the agent is on appears in the chat, live. <b>Tap it to take over;</b> when you’re done, hand it back."}, "Paga cuando tú dices «Pagar».": {"ca": "Paga quan tu dius «Pagar».", "en": "It pays when you say “Pay”."}, "Llena el carrito, la dirección y el envío, prueba los códigos de descuento y se para antes de pagar. <b>La tarjeta nunca pasa por el chat.</b>": {"ca": "Omple el cistell, l’adreça i l’enviament, prova els codis de descompte i s’atura abans de pagar. <b>La targeta mai no passa pel xat.</b>", "en": "It fills in the basket, the address and the delivery, tries the discount codes and stops before paying. <b>The card never goes through the chat.</b>"}, "Agentes, notas, rutinas. A un gesto.": {"ca": "Agents, notes, rutines. A un gest.", "en": "Agents, notes, routines. One gesture away."}, "Resumen de mañana y de noche, agenda, objetivos que se miden solos y avisos al llegar a un sitio, sin compartir dónde estás.": {"ca": "Resum del matí i del vespre, agenda, objectius que es mesuren sols i avisos en arribar a un lloc, sense compartir on ets.", "en": "Morning and evening summaries, calendar, goals that measure themselves and reminders when you arrive somewhere, without sharing where you are."}, "Por qué existe, qué decidí y qué me costó.": {"ca": "Per què existeix, què vaig decidir i què em va costar.", "en": "Why it exists, what I decided and what was hard."}, "El problema": {"ca": "El problema", "en": "The problem"}, "Hermes es un agente abierto muy capaz, pero en el móvil se usa a través de un bot de mensajería. Sirve para preguntas. Se queda corto cuando el agente compra, inicia sesión en una web o necesita tu permiso a mitad de tarea.": {"ca": "Hermes és un agent obert molt capaç, però al mòbil es fa servir a través d’un bot de missatgeria. Serveix per a preguntes. Es queda curt quan l’agent compra, inicia sessió en una web o necessita el teu permís a mitja tasca.", "en": "Hermes is a very capable open agent, but on a phone you reach it through a messaging bot. That works for questions. It falls short when the agent buys something, signs in to a site or needs your permission halfway through a task."}, "Las decisiones": {"ca": "Les decisions", "en": "The decisions"}, "App nativa en SwiftUI, no una web dentro de una app.": {"ca": "App nativa en SwiftUI, no una web dins d’una app.", "en": "A native SwiftUI app, not a website inside an app."}, "Ningún secreto en el chat: contraseñas, códigos y tarjetas van por hojas seguras a tu Mac.": {"ca": "Cap secret al xat: contrasenyes, codis i targetes van per fulls segurs al teu Mac.", "en": "No secrets in the chat: passwords, codes and cards go through secure sheets to your Mac."}, "Un paso irreversible, como pagar, espera un «Pagar» explícito.": {"ca": "Un pas irreversible, com pagar, espera un «Pagar» explícit.", "en": "An irreversible step, like paying, waits for an explicit “Pay”."}, "Hermes oficial, sin parches: lo que falta va en un plugin propio.": {"ca": "Hermes oficial, sense pedaços: el que falta va en un plugin propi.", "en": "Official Hermes, unpatched: anything missing goes in a plugin of my own."}, "Lo difícil": {"ca": "El difícil", "en": "The hard part"}, "Comprar de verdad. Cada tienda es distinta y el pago pasa por la página del banco. Alice distingue un pago confirmado de uno rechazado o sin confirmar, y bloquea un segundo pago en la misma tienda hasta saber qué pasó con el primero.": {"ca": "Comprar de debò. Cada botiga és diferent i el pagament passa per la pàgina del banc. Alice distingeix un pagament confirmat d’un de rebutjat o sense confirmar, i bloqueja un segon pagament a la mateixa botiga fins a saber què ha passat amb el primer.", "en": "Buying for real. Every shop is different and payment goes through the bank’s page. Alice tells a confirmed payment from a declined or unconfirmed one, and blocks a second payment at the same shop until it knows what happened to the first."}, "Dónde está hoy": {"ca": "On és avui", "en": "Where it is today"}, "La uso cada día para el chat, la agenda, los objetivos y los resúmenes. Las compras llegan hasta el pago y ya han destapado errores reales que he corregido. Todavía no la dejaría comprar sin supervisión.": {"ca": "La faig servir cada dia per al xat, l’agenda, els objectius i els resums. Les compres arriben fins al pagament i ja han destapat errors reals que he corregit. Encara no la deixaria comprar sense supervisió.", "en": "I use it every day for chat, calendar, goals and summaries. Purchases go as far as payment and have already surfaced real bugs that I’ve fixed. I wouldn’t yet let it buy unsupervised."}, "Ver el código": {"ca": "Veure el codi", "en": "See the code"}, "Tres capas, de punta a punta. Una decisión importante en cada una.": {"ca": "Tres capes, de punta a punta. Una decisió important en cadascuna.", "en": "Three layers, end to end. One important decision in each."}, "archivos de Swift en la app de iPhone": {"ca": "fitxers de Swift a l’app d’iPhone", "en": "Swift files in the iPhone app"}, "archivos de TypeScript en la web": {"ca": "fitxers de TypeScript a la web", "en": "TypeScript files in the web app"}, "archivos de Python en el servidor y los agentes": {"ca": "fitxers de Python al servidor i als agents", "en": "Python files in the server and agents"}, "iPhone y web": {"ca": "iPhone i web", "en": "iPhone and web"}, "Swift y TypeScript, unos 640 archivos": {"ca": "Swift i TypeScript, uns 640 fitxers", "en": "Swift and TypeScript, about 640 files"}, "Contraseñas, códigos y tarjetas se escriben en hojas seguras que van directas a tu Mac. El chat solo sabe que se guardaron.": {"ca": "Contrasenyes, codis i targetes s’escriuen en fulls segurs que van directes al teu Mac. El xat només sap que s’han desat.", "en": "Passwords, codes and cards are typed into secure sheets that go straight to your Mac. The chat only learns that they were saved."}, "Hermes en tu Mac": {"ca": "Hermes al teu Mac", "en": "Hermes on your Mac"}, "Python, unos 150 archivos": {"ca": "Python, uns 150 fitxers", "en": "Python, about 150 files"}, "Hermes oficial, sin parches; lo que falta va en un plugin propio. Un registro de pagos impide cobrar dos veces en la misma tienda.": {"ca": "Hermes oficial, sense pedaços; el que falta va en un plugin propi. Un registre de pagaments impedeix cobrar dues vegades a la mateixa botiga.", "en": "Official Hermes, unpatched; what’s missing goes in my own plugin. A payment ledger prevents charging twice at the same shop."}, "Agentes y modelo": {"ca": "Agents i model", "en": "Agents and model"}, "Un modelo juez y evaluaciones": {"ca": "Un model jutge i avaluacions", "en": "A judge model and evals"}, "Un segundo modelo hace de juez: devuelve al agente al trabajo si se para, y solo acepta «hecho» con una prueba.": {"ca": "Un segon model fa de jutge: torna l’agent a la feina si s’atura, i només accepta «fet» amb una prova.", "en": "A second model acts as judge: it sends the agent back to work if it stops, and only accepts “done” with proof."}, "Secciones": {"ca": "Seccions", "en": "Sections"}, "Notas": {"ca": "Notes", "en": "Notes"}, "Alice: inicio del chat": {"ca": "Alice: inici del xat", "en": "Alice: chat home"}, "Alice: menú lateral": {"ca": "Alice: menú lateral", "en": "Alice: side menu"}, "Marc Freixanet, Barcelona": {"ca": "Marc Freixanet, Barcelona", "en": "Marc Freixanet, Barcelona"}, "Saltar al contenido": {"ca": "Salta al contingut", "en": "Skip to content"}, "Nunca pagar dos veces": {"ca": "Mai pagar dues vegades", "en": "Never pay twice"}, "Piezas pequeñas de varios proyectos que muestran cómo trabajo: pantallas y código real.": {"ca": "Peces petites de diversos projectes que mostren com treballo: pantalles i codi real.", "en": "Small pieces from several projects that show how I work: real screens and real code."}};
   var LANGS = ['ca', 'es', 'en'];
   var lang = 'es';
   function T(es) { return lang === 'es' || !I18N[es] ? es : I18N[es][lang]; }
@@ -891,7 +939,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
   var header = document.querySelector('header.top');
   var home = document.getElementById('home');
   var chapters = {
-    home: [['trabajo', 'Trabajo'], ['craft', 'Detalles'], ['sobre', 'Sobre mí'], ['contacto', 'Contacto']],
+    home: [['trabajo', 'Trabajo'], ['detalles', 'Detalles'], ['sobre-mi', 'Sobre mí'], ['contacto', 'Contacto']],
     case: [['alice', 'Alice'], ['historia', 'La historia'], ['como', 'Cómo está hecha']]
   };
   var chapterName = document.getElementById('chapterName'), chapterDots = document.getElementById('chapterDots');
@@ -972,16 +1020,22 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
   // Reveals play once. Siblings that arrive together are staggered by 70 ms.
   (function () {
     if (reduce || !('IntersectionObserver' in window)) { reveals.forEach(function (el) { el.classList.add('in'); }); return; }
-    var vh = window.innerHeight;
-    var shown = [];
-    reveals.forEach(function (el) {
-      var r = el.getBoundingClientRect();
-      if (r.top < vh && r.bottom > 0) shown.push(el);              // already on screen: no animation
-    });
-    root.classList.add('reveal-now');
-    shown.forEach(function (el) { el.classList.add('in'); });
-    void root.offsetHeight;
-    requestAnimationFrame(function () { root.classList.remove('reveal-now'); });
+    // Anything already on screen is shown as is, with no animation (at load, and after a jump to a shared section)
+    function showInView() {
+      var vh = window.innerHeight, shown = [];
+      reveals.forEach(function (el) {
+        if (el.classList.contains('in')) return;
+        var r = el.getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0 && el.offsetParent) shown.push(el);
+      });
+      if (!shown.length) return;
+      root.classList.add('reveal-now');
+      shown.forEach(function (el) { el.classList.add('in'); });
+      void root.offsetHeight;
+      setTimeout(function () { root.classList.remove('reveal-now'); }, 50);
+    }
+    window.__showInView = showInView;
+    showInView();
     var batch = [], flushing = false;
     function flush() {
       batch.sort(function (a, b) { return a.getBoundingClientRect().top - b.getBoundingClientRect().top; });
@@ -993,7 +1047,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
         if (!e.isIntersecting || e.target.classList.contains('in')) return;
         io.unobserve(e.target); batch.push(e.target);
       });
-      if (batch.length && !flushing) { flushing = true; requestAnimationFrame(flush); }
+      if (batch.length && !flushing) { flushing = true; setTimeout(flush, 16); }
     }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
     reveals.forEach(function (el) { if (!el.classList.contains('in')) io.observe(el); });
     // Elements in a view that opens later (the case page) are observed when it is shown
@@ -1035,10 +1089,10 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     var inCase = caseIds.indexOf(h) !== -1;
     var wasCase = !caseView.hidden;
     home.hidden = inCase; caseView.hidden = !inCase;
+    document.title = inCase ? 'Alice — Marc Freixanet' : 'Marc Freixanet';
     if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
     if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) { t.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true }); } }
     if (window.__lenis) window.__lenis.resize();
-    if (!inCase && h) history.replaceState(null, '', location.pathname + location.search);
     frame();
   }
   function route(animate) {
@@ -1068,15 +1122,22 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     if (!el) return;
     e.preventDefault();
     if (!caseView.hidden) {                                 // from the case back to the index
-      location.hash = id;                                   // the router shows the index, scrolls there and clears the address
+      location.hash = id;                                   // the router shows the index and scrolls there
       return;
     }
-    if (id === 'top') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); }
-    else goTo(el);
+    if (id === 'top') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); clearHash(); }
+    else { goTo(el); history.replaceState(null, '', '#' + id); }   // shareable, without stacking history entries
   });
+  // A shared link (#detalles, #contacto…) opens at its section; a reload always opens at the top.
   var startHash = location.hash.replace('#', '');
-  if (startHash && caseIds.indexOf(startHash) === -1) clearHash();
-  function toTop() { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+  var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  var isReload = navEntry ? navEntry.type === 'reload' : false;
+  var homeTarget = startHash && caseIds.indexOf(startHash) === -1 ? document.getElementById(startHash) : null;
+  if (homeTarget && isReload) { clearHash(); homeTarget = null; }
+  function toTop() {
+    if (homeTarget) { homeTarget.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(homeTarget, { offset: -56, immediate: true }); if (window.__showInView) window.__showInView(); return; }
+    window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
+  }
   toTop();
   var touched = false;                                    // never pull someone back who has already started scrolling
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, function () { touched = true; }, { once: true, passive: true }); });
@@ -1173,7 +1234,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     var items = els.map(function (el) { return { el: el, k: Number(el.dataset.lag), cur: 0, tgt: 0 }; });
     var raf = 0;
     function measure() {
-      var vh = window.innerHeight, small = window.innerWidth < 861;
+      var vh = window.innerHeight, small = window.matchMedia('(width < 54rem)').matches;
       items.forEach(function (it) {
         if (!it.el.offsetParent) { it.tgt = 0; return; }
         var r = it.el.getBoundingClientRect();
