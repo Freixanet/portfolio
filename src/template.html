@@ -37,8 +37,11 @@
   --gutter: clamp(20px, 5vw, 64px);
   --col-gap: 24px;
 
-  --r-lg: 28px;
-  --r-md: 16px;
+  /* Corner radii scale with the size of the surface, like graphicalui.com: large surfaces 20, cards 12,
+     small marks 6, controls are pills. Something inside a rounded surface takes its radius minus the gap. */
+  --r-lg: 20px;
+  --r-md: 12px;
+  --r-sm: 6px;
   --ease: cubic-bezier(.2, .8, .2, 1);
 }
 @media (prefers-color-scheme: dark) {
@@ -69,7 +72,7 @@ a { color: inherit; text-decoration: none; }
 html { accent-color: var(--fg); caret-color: var(--fg); scrollbar-color: color-mix(in srgb, var(--fg) 25%, transparent) transparent; }
 .ul { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); transition: text-decoration-color .2s; }
 @media (hover: hover) { .ul:hover { text-decoration-color: currentColor; } }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: var(--r-sm); }
 em { font-style: normal; }
 
 .wrap { max-inline-size: 1240px; margin-inline: auto; padding-inline: var(--gutter); container: page / inline-size; }
@@ -307,8 +310,8 @@ section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + var(--head
 
 
 /* Keyboard: every control shows where focus is, in both themes and on the contact panel */
-a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
-a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: var(--r-sm); }
+a.project:focus-visible { outline-offset: 8px; border-radius: calc(var(--r-lg) + 8px); }   /* concentric with the frame it surrounds */
 h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus, [data-quiet-focus]:focus { outline: none; }
 .chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
 .contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
@@ -346,7 +349,7 @@ html:not(.js) .chapter-name { display: none; }
 .facts { display: grid; }
 .facts div { display: grid; grid-template-columns: 8em minmax(0, 1fr); gap: var(--s4); padding-block: var(--s4); border-bottom: 1px solid var(--line); align-items: baseline; }
 .facts div:first-child { border-top: 1px solid var(--line); }
-.slot { color: var(--muted); border: 1px dashed var(--muted); border-radius: 16px; padding: var(--s4) var(--s5); margin-bottom: var(--s7); }
+.slot { color: var(--muted); border: 1px dashed var(--muted); border-radius: var(--r-md); padding: var(--s4) var(--s5); margin-bottom: var(--s7); }
 
 /* Contact */
 
@@ -492,7 +495,7 @@ nav a.here { color: var(--fg); }
   --cbg: var(--fg); --cfg: var(--bg);
   background: var(--cbg); color: var(--cfg);
   padding-block: var(--section) calc(var(--s6) + env(safe-area-inset-bottom, 0px));
-  border-radius: calc((1 - var(--p, 1)) * 48px) calc((1 - var(--p, 1)) * 48px) 0 0;
+  border-radius: calc((1 - var(--p, 1)) * 40px) calc((1 - var(--p, 1)) * 40px) 0 0;
   margin-inline: calc((1 - var(--p, 1)) * var(--gutter));
 }
 .contact .label { color: color-mix(in srgb, var(--cfg) 68%, transparent); }
@@ -569,9 +572,9 @@ nav a.here { color: var(--fg); }
   .intro { padding-top: var(--s9); }
   .head { margin-bottom: var(--s7); }
   .contact { margin-inline: calc((1 - var(--p, 1)) * 12px); }
-  /* On a phone the top corners settle from 48px to the card radius. The bottom edge runs to the screen edge
+  /* On a phone the top corners settle from 40px to the card radius. The bottom edge runs to the screen edge
      square, so the display's own corners round it, whatever the model (as iOS sheets do). */
-  .contact { --cr: calc(var(--r-lg) + (1 - var(--p, 1)) * (48px - var(--r-lg))); border-radius: var(--cr) var(--cr) 0 0; }
+  .contact { --cr: calc(var(--r-lg) + (1 - var(--p, 1)) * (40px - var(--r-lg))); border-radius: var(--cr) var(--cr) 0 0; }
   .device { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
