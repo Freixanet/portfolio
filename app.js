@@ -298,7 +298,8 @@
     var ctx = cv.getContext('2d'), w = 0, h = 0, dpr = 1, color = '#000';
     var energy = 0, drive = 0, phase = 0, last = 0, running = false, visible = true;
     var px = -1, near = 0, nearDrive = 0, lastMove = { x: 0, y: 0, t: 0 };
-    function readColor() { color = getComputedStyle(document.body).color; }
+    // The colour is read on every frame, so it always matches the theme, however the theme was changed
+    function readColor() { color = getComputedStyle(cv).color; }
     function size() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       var r = cv.getBoundingClientRect(); w = r.width; h = r.height;
@@ -307,6 +308,7 @@
     }
     var TAU = Math.PI * 2;
     function draw() {
+      readColor();
       ctx.clearRect(0, 0, w, h);
       var mid = h / 2, amp = 5 + energy * 16;
       var s = phase;
@@ -341,12 +343,13 @@
     function start() { if (running || reduce || !visible || document.hidden) return; running = true; last = 0; requestAnimationFrame(tick); }
     function stop() { running = false; }
 
-    readColor(); size(); draw();
-    if (reduce) { new MutationObserver(function () { readColor(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); return; }
+    size(); draw();
+    if (reduce) { new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); return; }
     window.addEventListener('resize', function () { size(); draw(); });
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { readColor(); draw(); });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+    window.addEventListener('pageshow', draw);           // back from the background or the back/forward cache
     // the theme can also be switched from the footer
-    new MutationObserver(function () { readColor(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     window.addEventListener('pointermove', function (e) {
       var now = performance.now(), dtm = Math.max(16, now - lastMove.t);
       var v = Math.hypot(e.clientX - lastMove.x, e.clientY - lastMove.y) / dtm;   // px per ms
