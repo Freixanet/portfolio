@@ -298,7 +298,7 @@ section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
 /* Keyboard: every control shows where focus is, in both themes and on the contact panel */
 a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
 a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
-h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus { outline: none; }
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus, [data-quiet-focus]:focus { outline: none; }
 .chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
 .contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
 /* Coarse pointers (fingers) get a little more room between neighbouring controls */

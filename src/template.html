@@ -300,7 +300,7 @@ section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
 /* Keyboard: every control shows where focus is, in both themes and on the contact panel */
 a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
 a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
-h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus { outline: none; }
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus, [data-quiet-focus]:focus { outline: none; }
 .chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
 .contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
 /* Coarse pointers (fingers) get a little more room between neighbouring controls */
@@ -1094,13 +1094,25 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
     else el.scrollIntoView({ behavior: 'instant' });
     if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true });
   }
+  // Focus moved by the page follows the view for keyboard and screen-reader users. After a tap or a click
+  // it is quiet: no focus ring (Safari on iPhone draws one for any focus the page sets).
+  var keyboardUsed = false;
+  window.addEventListener('keydown', function () { keyboardUsed = true; }, true);
+  window.addEventListener('pointerdown', function () { keyboardUsed = false; }, true);
+  function quietFocus(el) {
+    if (!keyboardUsed) {
+      el.setAttribute('data-quiet-focus', '');
+      el.addEventListener('blur', function () { el.removeAttribute('data-quiet-focus'); }, { once: true });
+    }
+    el.focus({ preventScroll: true });
+  }
   function focusSection(el) {                             // keyboard and screen readers continue from the section reached
     if (el === document.body) return;
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
-    el.focus({ preventScroll: true });
+    quietFocus(el);
   }
   function moveFocus() {                                  // keyboard focus follows the view, once it is on screen
-    if (pendingFocus) { pendingFocus.focus({ preventScroll: true }); pendingFocus = null; }
+    if (pendingFocus) { quietFocus(pendingFocus); pendingFocus = null; }
   }
   function apply() {
     var h = location.hash.replace('#', '');

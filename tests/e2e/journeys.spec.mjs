@@ -26,6 +26,8 @@ test('opening the case and going back returns to the same place and focus', asyn
   await expect(page.locator('#home')).toBeVisible();
   await expect.poll(() => scrollY(page)).toBe(before);
   await expect(card).toBeFocused();
+  const ring = await card.evaluate((el) => getComputedStyle(el).outlineStyle);
+  expect(ring, 'no focus ring after a click or tap').toBe('none');
   await page.goForward();
   await expect(page.locator('#case')).toBeVisible();
 });
@@ -74,6 +76,7 @@ test('keyboard: the skip link is the first stop and moves focus to the content',
   await expect(page.locator('a.skip')).toBeInViewport();
   await page.keyboard.press('Enter');
   await expect.poll(() => focused(page)).toBe('trabajo');
+  expect(await page.locator('#trabajo').getAttribute('data-quiet-focus'), 'keyboard focus is not hidden').toBeNull();
   await page.keyboard.press('Tab');
   const inside = await page.evaluate(() => document.getElementById('trabajo').contains(document.activeElement));
   expect(inside).toBe(true);

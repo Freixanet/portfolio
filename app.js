@@ -210,13 +210,25 @@
     else el.scrollIntoView({ behavior: 'instant' });
     if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true });
   }
+  // Focus moved by the page follows the view for keyboard and screen-reader users. After a tap or a click
+  // it is quiet: no focus ring (Safari on iPhone draws one for any focus the page sets).
+  var keyboardUsed = false;
+  window.addEventListener('keydown', function () { keyboardUsed = true; }, true);
+  window.addEventListener('pointerdown', function () { keyboardUsed = false; }, true);
+  function quietFocus(el) {
+    if (!keyboardUsed) {
+      el.setAttribute('data-quiet-focus', '');
+      el.addEventListener('blur', function () { el.removeAttribute('data-quiet-focus'); }, { once: true });
+    }
+    el.focus({ preventScroll: true });
+  }
   function focusSection(el) {                             // keyboard and screen readers continue from the section reached
     if (el === document.body) return;
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
-    el.focus({ preventScroll: true });
+    quietFocus(el);
   }
   function moveFocus() {                                  // keyboard focus follows the view, once it is on screen
-    if (pendingFocus) { pendingFocus.focus({ preventScroll: true }); pendingFocus = null; }
+    if (pendingFocus) { quietFocus(pendingFocus); pendingFocus = null; }
   }
   function apply() {
     var h = location.hash.replace('#', '');
