@@ -116,6 +116,14 @@ for f, limit in budget.items():
     size = os.path.getsize(os.path.join(ROOT, f))
     check(size <= limit, f"{f} is {size} bytes, over its {limit} byte budget")
 
+# 7. Vendored code is exactly the reviewed release, and its licence travels with it
+import hashlib
+lenis = os.path.join(ROOT, "vendor/lenis-1.3.26.min.js")
+check(hashlib.sha256(open(lenis, "rb").read()).hexdigest() == "53195c9797e7ce7bf9d7fa9242b08209e57f46de4c9dac126a6494fa780e3346",
+      "vendor/lenis-1.3.26.min.js does not match the reviewed release")
+check(os.path.exists(os.path.join(ROOT, "vendor/LICENSE-lenis.txt")), "Lenis licence text missing")
+check(os.path.exists(os.path.join(ROOT, "fonts/OFL.txt")), "Geist licence text missing")
+
 if failures:
     print("FAILED"); [print(" -", f) for f in failures]; sys.exit(1)
 print("All checks passed")

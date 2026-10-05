@@ -1,6 +1,6 @@
 # Draws og.png (1200x630, link previews) and apple-touch-icon.png (180x180) with the site's own font.
 # Only needed when the headline or the mark change; the PNGs are committed.
-# Needs: pip install pillow fonttools brotli      Run: python3 src/render_images.py
+# Needs: pip install -r src/requirements-render.txt      Run: python3 src/render_images.py
 import io, os
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFont

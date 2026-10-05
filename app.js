@@ -82,9 +82,14 @@
     chapterCurrent = id;
     var label = set === 'home' ? T('Inicio') : 'Alice';
     chapters[set].forEach(function (c) { if (c[0] === id) label = T(c[1]); });
-    Array.prototype.forEach.call(chapterDots.children, function (a, i) { a.classList.toggle('on', chapters[set][i][0] === id); });
+    Array.prototype.forEach.call(chapterDots.children, function (a, i) {
+      var on = chapters[set][i][0] === id;
+      a.classList.toggle('on', on);
+      if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
     clearTimeout(chapterTimer);
-    if (chapterName.textContent !== label) {
+    if (chapterName.textContent !== label && reduce) chapterName.textContent = label;   // no crossfade with reduced motion
+    else if (chapterName.textContent !== label) {
       chapterName.classList.add('swap');
       chapterTimer = setTimeout(function () { chapterName.textContent = label; chapterName.classList.remove('swap'); }, 160);
     } else chapterName.classList.remove('swap');
@@ -215,12 +220,17 @@
 
   // Two views in one page: the index and Alice's case.
   var caseView = document.getElementById('case');
-  var caseIds = ['alice', 'como'];
-  var homeY = 0, pendingFocus = null;
+  var caseIds = ['alice', 'historia', 'como'];
+  var homeY = 0, pendingFocus = null, routed = false;
   function jump(el) {                                     // instant version of goTo, for links that open a view
     if (el.id === 'contacto') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
     else el.scrollIntoView({ behavior: 'instant' });
     if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true });
+  }
+  function focusSection(el) {                             // keyboard and screen readers continue from the section reached
+    if (el === document.body) return;
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
   }
   function moveFocus() {                                  // keyboard focus follows the view, once it is on screen
     if (pendingFocus) { pendingFocus.focus({ preventScroll: true }); pendingFocus = null; }
@@ -228,17 +238,22 @@
   function apply() {
     var h = location.hash.replace('#', '');
     var inCase = caseIds.indexOf(h) !== -1;
-    var wasCase = !caseView.hidden;
+    var wasCase = routed && !caseView.hidden;         // before the first route both views are in the page (no-JS layout)
+    routed = true;
     if (inCase && !wasCase) homeY = window.scrollY;
     home.hidden = inCase; caseView.hidden = !inCase; caseView.classList.toggle('open', inCase);
     document.title = inCase ? 'Alice — Marc Freixanet' : 'Marc Freixanet';
-    if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+    if (inCase && h === 'alice') { window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+    if (inCase && h !== 'alice') { var sec = document.getElementById(h); if (sec) jump(sec); }
     if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) jump(t); }
     if (!inCase && wasCase && !h) {                       // browser Back: the index at the point you left it
       window.scrollTo(0, homeY); if (window.__lenis) window.__lenis.scrollTo(homeY, { immediate: true });
       pendingFocus = document.querySelector('a.project.feature');
     }
-    if (inCase && !wasCase) { pendingFocus = caseView.querySelector('h1'); if (pendingFocus) pendingFocus.setAttribute('tabindex', '-1'); }
+    if (inCase && !wasCase) {
+      pendingFocus = h === 'alice' ? caseView.querySelector('h1') : document.querySelector('#' + h + ' h2');
+      if (pendingFocus) pendingFocus.setAttribute('tabindex', '-1');
+    }
     if (window.__lenis) window.__lenis.resize();
     frame();
   }
@@ -271,16 +286,21 @@
     var a = e.target.closest && e.target.closest('a[href^="#"]');
     if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
     var id = a.getAttribute('href').slice(1);
-    if (caseIds.indexOf(id) !== -1) return;                 // opening the case: let the router handle it
+    if (caseIds.indexOf(id) !== -1 && caseView.hidden) return;   // opening the case: the router handles it
     var el = id === 'top' ? document.body : document.getElementById(id);
     if (!el) return;
     e.preventDefault();
+    if (caseIds.indexOf(id) !== -1) {                       // within the case
+      if (id === 'alice') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); }
+      else goTo(el);
+      history.replaceState(null, '', '#' + id); focusSection(el); return;
+    }
     if (!caseView.hidden) {                                 // from the case back to the index
       location.hash = id;                                   // the router shows the index and scrolls there
       return;
     }
     if (id === 'top') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); clearHash(); }
-    else { goTo(el); history.replaceState(null, '', '#' + id); }   // shareable, without stacking history entries
+    else { goTo(el); history.replaceState(null, '', '#' + id); focusSection(el); }   // shareable, without stacking history entries
   });
   // A shared link (#detalles, #contacto…) opens at its section; a reload always opens at the top.
   var startHash = location.hash.replace('#', '');
@@ -288,14 +308,20 @@
   var isReload = navEntry ? navEntry.type === 'reload' : false;
   var homeTarget = startHash && caseIds.indexOf(startHash) === -1 ? document.getElementById(startHash) : null;
   if (homeTarget && isReload) { clearHash(); homeTarget = null; }
+  // While the page loads, the address carries no #section, so the browser's own jump to it (Safari does it
+  // after load) can't undo ours; it is put back once the page has landed.
+  if (homeTarget) clearHash();
+  function restoreHash() { if (homeTarget && !location.hash) history.replaceState(null, '', '#' + homeTarget.id); }
+  var caseTarget = startHash && caseIds.indexOf(startHash) > 0 ? document.getElementById(startHash) : null;
   function toTop() {
+    if (caseTarget && !caseView.hidden) { jump(caseTarget); return; }
     if (homeTarget) { jump(homeTarget); if (window.__showInView) window.__showInView(); return; }
     window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
   }
   toTop();
   var touched = false;                                    // never pull someone back who has already started scrolling
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, function () { touched = true; }, { once: true, passive: true }); });
-  window.addEventListener('load', function () { if (!touched) toTop(); });
+  window.addEventListener('load', function () { if (!touched) toTop(); restoreHash(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) toTop(); });
   route(false);
 

@@ -1,4 +1,5 @@
 # Every push is checked; only a version that passes reaches GitHub Pages.
+# Actions are pinned to a commit SHA (the tag in the comment is for reading only).
 name: Check and publish
 on:
   push:
@@ -14,21 +15,52 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: The committed site matches its source
         run: |
           python3 src/build.py
           git diff --exit-code -- index.html styles.css app.js 404.html robots.txt sitemap.xml favicon.svg
       - name: Site checks
         run: python3 tests/check.py
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Browser journeys and accessibility scan (Chromium, WebKit, Firefox, iPhone)
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium webkit firefox
+          npx playwright test
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
       - name: Bundle what gets published
         run: |
           mkdir _site
           cp -R index.html 404.html styles.css app.js robots.txt sitemap.xml favicon.svg apple-touch-icon.png og.png .nojekyll img fonts vendor _site/
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         if: github.event_name != 'pull_request'
         with:
           path: _site
+  # Lab numbers vary between runs on shared machines, so Lighthouse only reports; it never blocks publishing.
+  lighthouse:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - run: npx --yes @lhci/cli@0.15.1 autorun
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: lighthouse-report
+          path: lighthouse-report/
+          retention-days: 14
   deploy:
     needs: check
     if: github.event_name != 'pull_request'
@@ -41,4 +73,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

@@ -299,7 +299,7 @@ section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
 /* Keyboard: every control shows where focus is, in both themes and on the contact panel */
 a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
 a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
-h1[tabindex="-1"]:focus { outline: none; }
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus { outline: none; }
 .chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
 .contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
 /* Coarse pointers (fingers) get a little more room between neighbouring controls */
@@ -542,6 +542,11 @@ nav a.here { color: var(--fg); }
 @container page (width < 26rem) { .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); } }
 /* The header drops the name when the pill and the action need the row */
 @container page (width < 28rem) { .name .nm { display: none; } }
+/* At 320px the pill and the action still share one row: dots keep the 24px minimum target (WCAG 2.5.8) */
+@container page (width < 22rem) {
+  .chapter-dots a { width: 24px; }
+  header.top .chapter { gap: var(--s1); padding-inline-start: 10px; }
+}
 @media (width < 54rem) {
   .intro { padding-top: var(--s9); }
   .head { margin-bottom: var(--s7); }
@@ -563,7 +568,7 @@ nav a.here { color: var(--fg); }
   <div class="wrap">
     <a class="name" href="#top"><svg class="mark" width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><path d="M1 6c2.2 0 2.2-4.6 4.4-4.6S7.6 10.6 9.8 10.6 12 1.4 14.2 1.4s2.2 4.6 4.4 4.6H21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nm">Marc Freixanet</span></a>
     <nav class="chapter" aria-label="Secciones" data-aria-t>
-      <span class="chapter-name" id="chapterName" aria-live="polite">Inicio</span>
+      <span class="chapter-name" id="chapterName">Inicio</span>
       <span class="chapter-dots" id="chapterDots"><a href="#trabajo" aria-label="Trabajo"></a><a href="#detalles" aria-label="Detalles"></a><a href="#sobre-mi" aria-label="Sobre mí"></a><a href="#contacto" aria-label="Contacto"></a></span>
     </nav>
     <a class="cta ul" href="#contacto" data-sec="contacto">Escríbeme</a>
@@ -768,27 +773,27 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
           <article class="step" data-screen="0">
             <h2>Le pides algo. Como a una persona.</h2>
             <p>Un chat nativo con respuestas en directo, adjuntos y una voz que puedes interrumpir hablando. <b>Una cosa cada vez.</b></p>
-            <div class="inline-phone"></div>
+            <div class="inline-phone" aria-hidden="true"></div>
           </article>
           <article class="step" data-screen="1">
             <h2>Ves lo que hace. Mientras lo hace.</h2>
             <p>La página en la que está el agente aparece en el chat, en directo. <b>La tocas y tomas el control;</b> al acabar, se la devuelves.</p>
-            <div class="inline-phone"></div>
+            <div class="inline-phone" aria-hidden="true"></div>
           </article>
           <article class="step" data-screen="2">
             <h2>Paga cuando tú dices «Pagar».</h2>
             <p>Llena el carrito, la dirección y el envío, prueba los códigos de descuento y se para antes de pagar. <b>La tarjeta nunca pasa por el chat.</b></p>
-            <div class="inline-phone"></div>
+            <div class="inline-phone" aria-hidden="true"></div>
           </article>
           <article class="step" data-screen="3">
             <h2>Agentes, notas, rutinas. A un gesto.</h2>
             <p>Resumen de mañana y de noche, agenda, objetivos que se miden solos y avisos al llegar a un sitio, sin compartir dónde estás.</p>
-            <div class="inline-phone"></div>
+            <div class="inline-phone" aria-hidden="true"></div>
           </article>
         </div>
         <div class="right stage" aria-hidden="true">
           <div class="stage-inner">
-            <div class="device" id="device"><div class="phone"><div class="screen-set" id="screens">
+            <div class="device" id="device" aria-hidden="true"><div class="phone"><div class="screen-set" id="screens">
               <div class="screen on"><img alt="" src="data:image/jpeg;base64,{{CHAT}}"></div>
               {{UI}}
               <div class="screen"><img alt="" src="data:image/jpeg;base64,{{NAV}}"></div>
@@ -954,9 +959,14 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
     chapterCurrent = id;
     var label = set === 'home' ? T('Inicio') : 'Alice';
     chapters[set].forEach(function (c) { if (c[0] === id) label = T(c[1]); });
-    Array.prototype.forEach.call(chapterDots.children, function (a, i) { a.classList.toggle('on', chapters[set][i][0] === id); });
+    Array.prototype.forEach.call(chapterDots.children, function (a, i) {
+      var on = chapters[set][i][0] === id;
+      a.classList.toggle('on', on);
+      if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
     clearTimeout(chapterTimer);
-    if (chapterName.textContent !== label) {
+    if (chapterName.textContent !== label && reduce) chapterName.textContent = label;   // no crossfade with reduced motion
+    else if (chapterName.textContent !== label) {
       chapterName.classList.add('swap');
       chapterTimer = setTimeout(function () { chapterName.textContent = label; chapterName.classList.remove('swap'); }, 160);
     } else chapterName.classList.remove('swap');
@@ -1087,12 +1097,17 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
 
   // Two views in one page: the index and Alice's case.
   var caseView = document.getElementById('case');
-  var caseIds = ['alice', 'como'];
-  var homeY = 0, pendingFocus = null;
+  var caseIds = ['alice', 'historia', 'como'];
+  var homeY = 0, pendingFocus = null, routed = false;
   function jump(el) {                                     // instant version of goTo, for links that open a view
     if (el.id === 'contacto') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
     else el.scrollIntoView({ behavior: 'instant' });
     if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true });
+  }
+  function focusSection(el) {                             // keyboard and screen readers continue from the section reached
+    if (el === document.body) return;
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
   }
   function moveFocus() {                                  // keyboard focus follows the view, once it is on screen
     if (pendingFocus) { pendingFocus.focus({ preventScroll: true }); pendingFocus = null; }
@@ -1100,17 +1115,22 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
   function apply() {
     var h = location.hash.replace('#', '');
     var inCase = caseIds.indexOf(h) !== -1;
-    var wasCase = !caseView.hidden;
+    var wasCase = routed && !caseView.hidden;         // before the first route both views are in the page (no-JS layout)
+    routed = true;
     if (inCase && !wasCase) homeY = window.scrollY;
     home.hidden = inCase; caseView.hidden = !inCase; caseView.classList.toggle('open', inCase);
     document.title = inCase ? 'Alice — Marc Freixanet' : 'Marc Freixanet';
-    if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+    if (inCase && h === 'alice') { window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+    if (inCase && h !== 'alice') { var sec = document.getElementById(h); if (sec) jump(sec); }
     if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) jump(t); }
     if (!inCase && wasCase && !h) {                       // browser Back: the index at the point you left it
       window.scrollTo(0, homeY); if (window.__lenis) window.__lenis.scrollTo(homeY, { immediate: true });
       pendingFocus = document.querySelector('a.project.feature');
     }
-    if (inCase && !wasCase) { pendingFocus = caseView.querySelector('h1'); if (pendingFocus) pendingFocus.setAttribute('tabindex', '-1'); }
+    if (inCase && !wasCase) {
+      pendingFocus = h === 'alice' ? caseView.querySelector('h1') : document.querySelector('#' + h + ' h2');
+      if (pendingFocus) pendingFocus.setAttribute('tabindex', '-1');
+    }
     if (window.__lenis) window.__lenis.resize();
     frame();
   }
@@ -1143,16 +1163,21 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
     var a = e.target.closest && e.target.closest('a[href^="#"]');
     if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
     var id = a.getAttribute('href').slice(1);
-    if (caseIds.indexOf(id) !== -1) return;                 // opening the case: let the router handle it
+    if (caseIds.indexOf(id) !== -1 && caseView.hidden) return;   // opening the case: the router handles it
     var el = id === 'top' ? document.body : document.getElementById(id);
     if (!el) return;
     e.preventDefault();
+    if (caseIds.indexOf(id) !== -1) {                       // within the case
+      if (id === 'alice') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); }
+      else goTo(el);
+      history.replaceState(null, '', '#' + id); focusSection(el); return;
+    }
     if (!caseView.hidden) {                                 // from the case back to the index
       location.hash = id;                                   // the router shows the index and scrolls there
       return;
     }
     if (id === 'top') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); clearHash(); }
-    else { goTo(el); history.replaceState(null, '', '#' + id); }   // shareable, without stacking history entries
+    else { goTo(el); history.replaceState(null, '', '#' + id); focusSection(el); }   // shareable, without stacking history entries
   });
   // A shared link (#detalles, #contacto…) opens at its section; a reload always opens at the top.
   var startHash = location.hash.replace('#', '');
@@ -1160,14 +1185,20 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
   var isReload = navEntry ? navEntry.type === 'reload' : false;
   var homeTarget = startHash && caseIds.indexOf(startHash) === -1 ? document.getElementById(startHash) : null;
   if (homeTarget && isReload) { clearHash(); homeTarget = null; }
+  // While the page loads, the address carries no #section, so the browser's own jump to it (Safari does it
+  // after load) can't undo ours; it is put back once the page has landed.
+  if (homeTarget) clearHash();
+  function restoreHash() { if (homeTarget && !location.hash) history.replaceState(null, '', '#' + homeTarget.id); }
+  var caseTarget = startHash && caseIds.indexOf(startHash) > 0 ? document.getElementById(startHash) : null;
   function toTop() {
+    if (caseTarget && !caseView.hidden) { jump(caseTarget); return; }
     if (homeTarget) { jump(homeTarget); if (window.__showInView) window.__showInView(); return; }
     window.scrollTo({ top: 0, behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
   }
   toTop();
   var touched = false;                                    // never pull someone back who has already started scrolling
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, function () { touched = true; }, { once: true, passive: true }); });
-  window.addEventListener('load', function () { if (!touched) toTop(); });
+  window.addEventListener('load', function () { if (!touched) toTop(); restoreHash(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) toTop(); });
   route(false);
 

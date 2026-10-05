@@ -297,7 +297,7 @@ section[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
 /* Keyboard: every control shows where focus is, in both themes and on the contact panel */
 a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 6px; }
 a.project:focus-visible { outline-offset: 8px; border-radius: var(--r-lg); }
-h1[tabindex="-1"]:focus { outline: none; }
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus { outline: none; }
 .chapter-dots a:focus-visible { outline-offset: -2px; border-radius: 999px; }
 .contact a:focus-visible, .contact button:focus-visible { outline-color: var(--cfg); }
 /* Coarse pointers (fingers) get a little more room between neighbouring controls */
@@ -540,6 +540,11 @@ nav a.here { color: var(--fg); }
 @container page (width < 26rem) { .facts div { grid-template-columns: minmax(0, 1fr); gap: var(--s1); } }
 /* The header drops the name when the pill and the action need the row */
 @container page (width < 28rem) { .name .nm { display: none; } }
+/* At 320px the pill and the action still share one row: dots keep the 24px minimum target (WCAG 2.5.8) */
+@container page (width < 22rem) {
+  .chapter-dots a { width: 24px; }
+  header.top .chapter { gap: var(--s1); padding-inline-start: 10px; }
+}
 @media (width < 54rem) {
   .intro { padding-top: var(--s9); }
   .head { margin-bottom: var(--s7); }
