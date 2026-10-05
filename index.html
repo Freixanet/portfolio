@@ -941,6 +941,7 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     if (inCase && !wasCase && h === 'alice') { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
     if (!inCase && wasCase && h) { var t = document.getElementById(h); if (t) { t.scrollIntoView({ behavior: 'instant' }); if (window.__lenis) window.__lenis.scrollTo(window.scrollY, { immediate: true }); } }
     if (window.__lenis) window.__lenis.resize();
+    if (!inCase && h) history.replaceState(null, '', location.pathname + location.search);
     frame();
   }
   function route(animate) {
@@ -953,6 +954,37 @@ nav a.here::after, nav a:hover::after { transform: scaleX(1); }
     else apply();
   }
   window.addEventListener('hashchange', function () { route(true); });
+  // Section links on the index scroll to their section without writing it into the address,
+  // so a reload always opens at the top. Only the Alice case keeps its own address (#alice).
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function clearHash() { history.replaceState(null, '', location.pathname + location.search); }
+  function goTo(el) {
+    if (window.__lenis) window.__lenis.scrollTo(el, { offset: -56 });
+    else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    var id = a.getAttribute('href').slice(1);
+    if (caseIds.indexOf(id) !== -1) return;                 // opening the case: let the router handle it
+    var el = id === 'top' ? document.body : document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    if (!caseView.hidden) {                                 // from the case back to the index
+      location.hash = id;                                   // the router shows the index, scrolls there and clears the address
+      return;
+    }
+    if (id === 'top') { if (window.__lenis) window.__lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); }
+    else goTo(el);
+  });
+  var startHash = location.hash.replace('#', '');
+  if (startHash && caseIds.indexOf(startHash) === -1) clearHash();
+  function toTop() { window.scrollTo(0, 0); if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true }); }
+  toTop();
+  var touched = false;                                    // never pull someone back who has already started scrolling
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, function () { touched = true; }, { once: true, passive: true }); });
+  window.addEventListener('load', function () { if (!touched) toTop(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) toTop(); });
   route(false);
 
 
