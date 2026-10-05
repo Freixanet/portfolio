@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "startServerCommand": "python3 tests/serve.py 4174",
-      "url": ["http://127.0.0.1:4174/portfolio/", "http://127.0.0.1:4174/portfolio/?lang=en"],
+      "url": ["http://127.0.0.1:4174/portfolio/", "http://127.0.0.1:4174/portfolio/en/"],
       "numberOfRuns": 3,
       "settings": { "preset": "desktop" }
     },

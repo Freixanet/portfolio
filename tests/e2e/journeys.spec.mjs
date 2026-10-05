@@ -79,17 +79,31 @@ test('keyboard: the skip link is the first stop and moves focus to the content',
   expect(inside).toBe(true);
 });
 
-test('language: English and Catalan, chosen or from the address, and remembered', async ({ page }) => {
+test('language: each one has its own page, the choice is remembered, old ?lang= links still work', async ({ page }) => {
   await page.goto('./');
-  await page.locator('[data-lang="en"]').click();
+  await page.locator('a[data-lang="en"]').click();
+  await expect(page).toHaveURL(/\/portfolio\/en\/$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#intro h1')).toHaveText('I build complete products.');
-  await expect(page.locator('[data-lang="en"]')).toHaveAttribute('aria-pressed', 'true');
-  await page.reload();
-  await expect(page.locator('#intro h1')).toHaveText('I build complete products.');
+  await expect(page.locator('a[data-lang="en"]')).toHaveAttribute('aria-current', 'page');
+  await page.goto('./');                                              // the home address remembers the choice
+  await expect(page).toHaveURL(/\/en\/$/);
+  await page.locator('a[data-lang="es"]').click();
+  await expect(page).toHaveURL(/\/portfolio\/$/);
+  await expect(page.locator('#intro h1')).toHaveText('Construyo productos completos.');
   await page.goto('./?lang=ca');
-  await expect(page.locator('html')).toHaveAttribute('lang', 'ca');
+  await expect(page).toHaveURL(/\/ca\/$/);
   await expect(page.locator('#intro h1')).toHaveText('Construeixo productes complets.');
+});
+
+test('language pages work without JavaScript, translated in the HTML itself', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto('./en/');
+  await expect(page.locator('#intro h1')).toHaveText('I build complete products.');
+  await page.locator('a[data-lang="ca"]').click();
+  await expect(page.locator('#intro h1')).toHaveText('Construeixo productes complets.');
+  await context.close();
 });
 
 test('theme: follows the system, can be overridden, and is remembered', async ({ page }) => {

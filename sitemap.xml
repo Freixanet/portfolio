@@ -3,19 +3,22 @@
   <url>
     <loc>https://freixanet.github.io/portfolio/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/"/>
-    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://freixanet.github.io/portfolio/"/>
   </url>
   <url>
-    <loc>https://freixanet.github.io/portfolio/?lang=ca</loc>
+    <loc>https://freixanet.github.io/portfolio/ca/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/"/>
-    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://freixanet.github.io/portfolio/"/>
   </url>
   <url>
-    <loc>https://freixanet.github.io/portfolio/?lang=en</loc>
+    <loc>https://freixanet.github.io/portfolio/en/</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://freixanet.github.io/portfolio/"/>
-    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/?lang=ca"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://freixanet.github.io/portfolio/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://freixanet.github.io/portfolio/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://freixanet.github.io/portfolio/"/>
   </url>
 </urlset>

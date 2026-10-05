@@ -30,34 +30,17 @@
   var LANGS = ['ca', 'es', 'en'];
   var lang = 'es';
   function T(es) { return lang === 'es' || !I18N[es] ? es : I18N[es][lang]; }
-  var norm = function (h) { return h.replace(/\s+/g, ' ').trim(); };
-  var tEls = (function () {
-    var sel = 'h1,h2,h3,h4,p,li,dt,dd,span.label,span.pill,.prow span,.stack span,.figures span,.crumbs a,a.cta,button.btn,a.btn,.pref-k,[data-theme-set],.play-label,.nt,a.skip';
-    var all = Array.prototype.slice.call(document.querySelectorAll(sel)).filter(function (el) { return !el.closest('.screen-set, .inline-phone, .mail') && I18N[norm(el.innerHTML)]; });
-    var set = new Set(all);
-    return all.filter(function (el) { for (var p = el.parentElement; p; p = p.parentElement) if (set.has(p)) return false; return true; })
-      .map(function (el) { return { el: el, key: norm(el.innerHTML) }; });
-  })();
-  var aEls = Array.prototype.slice.call(document.querySelectorAll('[data-aria-t]')).map(function (el) { return { el: el, key: el.getAttribute('aria-label') }; });
-  var imgEls = Array.prototype.slice.call(document.querySelectorAll('img[alt]')).filter(function (i) { return I18N[i.alt]; }).map(function (el) { return { el: el, key: el.alt }; });
-  function splitWords(el) { el.innerHTML = el.textContent.trim().split(/\s+/).map(function (w) { return '<span>' + w + '</span>'; }).join(' '); }
-  function applyLang(next, live) {
-    lang = next;
-    root.setAttribute('lang', lang);
-    var desc = document.querySelector('meta[name="description"]');
-    if (desc) { if (!desc.dataset.es) desc.dataset.es = desc.content; desc.content = T(desc.dataset.es); }
-    tEls.forEach(function (x) { x.el.innerHTML = T(x.key); if (x.el.hasAttribute('data-lit')) splitWords(x.el); });
-    aEls.forEach(function (x) { x.el.setAttribute('aria-label', T(x.key)); });
-    imgEls.forEach(function (x) { x.el.alt = T(x.key); });
-    document.querySelectorAll('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
-    if (live) { var cur = chapterCurrent; chapterSet = ''; setChapter(home.hidden ? 'case' : 'home', cur); collect(); request(); }
-  }
+  // Each language is its own page (/, /ca/, /en/), translated when the site is built. The script only
+  // translates the few strings it writes itself, such as the section name and «Copiado».
+  lang = LANGS.indexOf(root.getAttribute('lang')) !== -1 ? root.getAttribute('lang') : 'es';
   var savedLang = null;
   try { savedLang = localStorage.getItem('lang'); } catch (e) {}
-  var guess = (navigator.language || 'es').slice(0, 2).toLowerCase();
+  // Old links (?lang=en) and a language chosen on an earlier visit open the matching page. There is no guess
+  // from the browser's language: search engines must be able to read the Spanish page at its own address.
   var urlLang = null;
   try { urlLang = new URLSearchParams(location.search).get('lang'); } catch (e) {}
-  applyLang(LANGS.indexOf(urlLang) !== -1 ? urlLang : LANGS.indexOf(savedLang) !== -1 ? savedLang : (LANGS.indexOf(guess) !== -1 ? guess : 'es'), false);
+  var want = LANGS.indexOf(urlLang) !== -1 ? urlLang : (lang === 'es' && LANGS.indexOf(savedLang) !== -1 ? savedLang : null);
+  if (want && want !== lang && lang === 'es') { location.replace(want + '/' + location.hash); return; }
 
   // Words of the statement, one span each
   document.querySelectorAll('[data-lit]').forEach(function (el) {
@@ -478,11 +461,10 @@
   // Applied at once: a page-wide crossfade had to capture the whole page first and held the next paint
   // back by 300–700 ms, well over the 200 ms that keeps an interaction feeling immediate (INP).
   function swap(fn) { fn(); }
-  document.querySelectorAll('[data-lang]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      if (b.dataset.lang === lang) return;
-      swap(function () { applyLang(b.dataset.lang, true); });
-      try { localStorage.setItem('lang', b.dataset.lang); } catch (e) {}
+  document.querySelectorAll('a[data-lang]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try { localStorage.setItem('lang', a.dataset.lang); } catch (e) {}
+      if (location.hash) a.href = a.href.split('#')[0] + location.hash;   // stay at the same section
     });
   });
   var themeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-theme-set]'));

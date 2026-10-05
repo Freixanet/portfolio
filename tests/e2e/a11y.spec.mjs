@@ -27,7 +27,7 @@ test('axe: index in Catalan and English', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'one engine is enough for the rule scan');
   for (const lang of ['ca', 'en']) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(`./?lang=${lang}`);
+    await page.goto(`./${lang}/`);
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
     const blocking = results.violations.filter((v) => ['serious', 'critical'].includes(v.impact));
     expect(blocking.map((v) => `${lang} ${v.id}: ${v.help} ${v.nodes.slice(0, 3).map((n) => n.target.join(" ") + " " + (n.any[0] && n.any[0].message)).join(" | ")}`)).toEqual([]);

@@ -1,7 +1,7 @@
 # Builds the site from src/ into the repository root: index.html, styles.css, app.js, 404.html,
 # robots.txt, sitemap.xml and the icons. Run from anywhere:  python3 src/build.py
 # Optional: python3 src/build.py --artifact DIR  also writes a copy for the Claude artifact (no <head>).
-import base64, hashlib, html, json, os, shutil, sys
+import base64, hashlib, html, json, os, re, shutil, sys
 
 SRC = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(SRC)
@@ -38,7 +38,7 @@ for old, new in [
 ]:
     assert old in s, old[:50]
     s = s.replace(old, new)
-assert "{{" not in s, "placeholder left"
+assert "{{" not in s.replace("{{LANG_LINKS}}", ""), "placeholder left"
 
 # Split the template into head, CSS, body and JS
 i = s.index("<style>"); j = s.index("</style>") + len("</style>")
@@ -57,7 +57,6 @@ css = (":root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
 head_script = "document.documentElement.classList.add('js');"
 assert f"<script>{head_script}</script>" in top
 desc = "Marc Freixanet construye productos completos: apps de iPhone, webs, y los servidores y agentes que hay detrás."
-desc_en = "Marc Freixanet builds complete products: iPhone apps, websites, and the servers and agents behind them."
 person = json.dumps({"@context": "https://schema.org", "@type": "Person", "name": "Marc Freixanet",
                      "url": URL, "jobTitle": "Developer", "homeLocation": {"@type": "Place", "name": "Barcelona"},
                      "sameAs": ["https://github.com/Freixanet"]}, ensure_ascii=False)
@@ -67,39 +66,91 @@ def csp(*scripts):
             "; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; "
             "object-src 'none'; base-uri 'self'; form-action 'none'")
 
-alternates = "".join(f'<link rel="alternate" hreflang="{l}" href="{URL}?lang={l}">\n' for l in ("ca", "en")) + \
-             f'<link rel="alternate" hreflang="es" href="{URL}">\n<link rel="alternate" hreflang="x-default" href="{URL}">\n'
+# ——— One static page per language: / (Spanish), /ca/, /en/ ———
+I18N = json.loads(re.search(r"var I18N = (\{.*?\});\n", js).group(1))
+PATH = {"es": "", "ca": "ca/", "en": "en/"}
+NAME = {"ca": "Català", "es": "Español", "en": "English"}
+LOCALE = {"es": "es_ES", "ca": "ca_ES", "en": "en_GB"}
 
-head = f'''<!doctype html>
-<html lang="es">
+def translate(page, lang):
+    """Replaces every text the dictionary knows: element contents, aria-labels and alt texts."""
+    if lang == "es":
+        return page
+    for es, tr in sorted(I18N.items(), key=lambda kv: -len(kv[0])):    # longest first, so no key eats a longer one
+        words = [re.escape(w) for w in es.split()]
+        pattern = r"\s*".join(words)
+        page = re.sub(r"(>\s*)" + pattern + r"(\s*</)", lambda m: m.group(1) + tr[lang] + m.group(2), page)
+        attr = html.escape(es, quote=True)
+        for a in ("aria-label", "alt", "content"):
+            page = page.replace(f'{a}="{attr}"', f'{a}="{html.escape(tr[lang], quote=True)}"')
+    return page
+
+def relocate(page, depth):
+    """Points relative src/href/srcset one folder up for the /ca/ and /en/ pages (in-page #links stay)."""
+    if not depth:
+        return page
+    up = "../" * depth
+    def fix(url):
+        return url if re.match(r"^(#|[a-z]+:|/|data:)", url) else up + url
+    page = re.sub(r'\b(src|href)="([^"]*)"', lambda m: f'{m.group(1)}="{fix(m.group(2))}"', page)
+    page = re.sub(r'\bsrcset="([^"]*)"', lambda m: 'srcset="' + ", ".join(
+        " ".join([fix(p.strip().split(" ")[0])] + p.strip().split(" ")[1:]) for p in m.group(1).split(",")) + '"', page)
+    return page
+
+def lang_links(lang, artifact=False):
+    """Links to the three language pages, relative to the page they are written into."""
+    up = "../" if PATH[lang] else ""
+    out = []
+    for l in ("ca", "es", "en"):
+        href = "./" if l == lang else (up + PATH[l] or "./")
+        if artifact: href = "index.html" if l == lang else up + PATH[l] + "index.html"
+        cur = ' aria-current="page"' if l == lang else ""
+        out.append(f'<a href="{href}" hreflang="{l}" lang="{l}" data-lang="{l}"{cur}>{NAME[l]}</a>')
+    return "\n            ".join(out)
+
+alternates = "".join(f'<link rel="alternate" hreflang="{l}" href="{URL}{PATH[l]}">\n' for l in ("es", "ca", "en")) + \
+             f'<link rel="alternate" hreflang="x-default" href="{URL}">\n'
+
+def head(lang):
+    d = desc if lang == "es" else I18N[desc][lang]
+    alt_locales = "".join(f'<meta property="og:locale:alternate" content="{LOCALE[l]}">\n' for l in LANGS if l != lang)
+    return f"""<!doctype html>
+<html lang="{lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="{csp(head_script)}">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="{desc}">
+<meta name="description" content="{d}">
 <meta name="color-scheme" content="light dark">
-<link rel="canonical" href="{URL}">
+<link rel="canonical" href="{URL}{PATH[lang]}">
 {alternates}<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{URL}">
+<meta property="og:url" content="{URL}{PATH[lang]}">
 <meta property="og:title" content="Marc Freixanet">
-<meta property="og:description" content="{desc}">
+<meta property="og:description" content="{d}">
 <meta property="og:image" content="{URL}og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Marc Freixanet. Construyo productos completos.">
-<meta property="og:locale" content="es_ES">
-<meta property="og:locale:alternate" content="ca_ES">
-<meta property="og:locale:alternate" content="en_GB">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="{LOCALE[lang]}">
+{alt_locales}<meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{person}</script>
-'''
+"""
+
 link_css = '<link rel="stylesheet" href="styles.css">\n'
 write("styles.css", css)
 write("app.js", js)
-write("index.html", head + top + link_css + "</head>\n<body>" + body + "\n</body>\n</html>\n")
+pages = {}
+for lang in LANGS:
+    depth = 1 if PATH[lang] else 0
+    doc = head(lang) + top + link_css + "</head>\n<body>" + body + "\n</body>\n</html>\n"
+    doc = relocate(translate(doc, lang), depth)
+    pages[lang] = doc
+    doc = doc.replace("{{LANG_LINKS}}", lang_links(lang))
+    if PATH[lang]: os.makedirs(os.path.join(ROOT, PATH[lang]), exist_ok=True)
+    write(PATH[lang] + "index.html", doc)
 
 # 404: same look, in the visitor's language. Absolute paths, because GitHub serves it at any depth.
 nf_script = ("var l=(function(){try{return localStorage.getItem('lang')}catch(e){}})()||(navigator.language||'es').slice(0,2);"
@@ -140,10 +191,11 @@ write("404.html", f'''<!doctype html>
 ''')
 
 write("robots.txt", f"User-agent: *\nAllow: /\nDisallow: /src/\nDisallow: /tests/\n\nSitemap: {URL}sitemap.xml\n")
-alts = "".join(f'    <xhtml:link rel="alternate" hreflang="{l}" href="{html.escape(URL if l == "es" else URL + "?lang=" + l)}"/>\n' for l in LANGS)
+alts = "".join(f'    <xhtml:link rel="alternate" hreflang="{l}" href="{URL}{PATH[l]}"/>\n' for l in LANGS) + \
+       f'    <xhtml:link rel="alternate" hreflang="x-default" href="{URL}"/>\n'
 write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n'
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
-      + "".join(f"  <url>\n    <loc>{html.escape(u)}</loc>\n{alts}  </url>\n" for u in (URL, URL + "?lang=ca", URL + "?lang=en"))
+      + "".join(f"  <url>\n    <loc>{URL}{PATH[l]}</loc>\n{alts}  </url>\n" for l in LANGS)
       + "</urlset>\n")
 write("favicon.svg", '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>rect{fill:#000}path{stroke:#f2f2f2}'
       '@media(prefers-color-scheme:dark){rect{fill:#f2f2f2}path{stroke:#000}}</style><rect width="32" height="32" rx="7"/>'
@@ -158,6 +210,11 @@ if "--artifact" in sys.argv:                      # the Claude artifact: the hos
     for f in ("styles.css", "app.js"):
         shutil.copy(os.path.join(ROOT, f), os.path.join(A, f))
     with open(os.path.join(A, "index.html"), "w", encoding="utf-8") as f:
-        f.write(top + link_css + body)
+        f.write(top + link_css + body.replace("{{LANG_LINKS}}", lang_links("es", artifact=True)))
+    for lang in ("ca", "en"):
+        os.makedirs(os.path.join(A, lang), exist_ok=True)
+        doc = pages[lang].replace("{{LANG_LINKS}}", lang_links(lang, artifact=True))
+        with open(os.path.join(A, lang, "index.html"), "w", encoding="utf-8") as f:
+            f.write(doc)
 
-print("built", {f: os.path.getsize(os.path.join(ROOT, f)) for f in ("index.html", "styles.css", "app.js", "404.html")})
+print("built", {f: os.path.getsize(os.path.join(ROOT, f)) for f in ("index.html", "ca/index.html", "en/index.html", "styles.css", "app.js", "404.html")})

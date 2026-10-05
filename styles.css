@@ -238,12 +238,13 @@ header.top .chapter { justify-self: center; display: inline-flex; align-items: c
 .prefs { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s2) var(--s7); }
 .pref { display: flex; align-items: baseline; gap: var(--s4); }
 .pref-k { color: color-mix(in srgb, var(--cfg) 66%, transparent); }
-.pref button { position: relative; border: 0; background: none; min-block-size: 44px; padding: 0 2px; font: inherit; color: color-mix(in srgb, var(--cfg) 68%, transparent); cursor: pointer; transition: color .25s; }
-@media (hover: hover) { .pref button:hover { color: var(--cfg); } }
-.pref button[aria-pressed="true"] { color: var(--cfg); }
-.pref button::before { content: ""; position: absolute; inset-inline-start: 50%; inset-block-end: -3px; width: 4px; height: 4px; margin-inline-start: -2px; border-radius: 999px; background: currentColor; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease); }
-.pref button[aria-pressed="true"]::before { opacity: 1; transform: none; }
-.pref button:focus-visible { outline: 2px solid var(--cfg); outline-offset: 3px; border-radius: 4px; }
+.pref a { display: inline-flex; align-items: center; text-decoration: none; }
+.pref :is(button, a) { position: relative; border: 0; background: none; min-block-size: 44px; padding: 0 2px; font: inherit; color: color-mix(in srgb, var(--cfg) 68%, transparent); cursor: pointer; transition: color .25s; }
+@media (hover: hover) { .pref :is(button, a):hover { color: var(--cfg); } }
+.pref button[aria-pressed="true"], .pref a[aria-current="page"] { color: var(--cfg); }
+.pref :is(button, a)::before { content: ""; position: absolute; inset-inline-start: 50%; inset-block-end: -3px; width: 4px; height: 4px; margin-inline-start: -2px; border-radius: 999px; background: currentColor; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease); }
+.pref button[aria-pressed="true"]::before, .pref a[aria-current="page"]::before { opacity: 1; transform: none; }
+.pref :is(button, a):focus-visible { outline: 2px solid var(--cfg); outline-offset: 3px; border-radius: 4px; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .4s; }
 @container page (width < 54rem) {
   .foot { grid-template-columns: 1fr auto; }
@@ -271,7 +272,7 @@ header.top .chapter { height: 44px; }
 @media (prefers-contrast: more) {
   :root { --muted: #4a4a4a; --line: #9a9a9a; }
   :root[data-theme="dark"] { --muted: #b5b5b5; --line: #5a5a5a; }
-  .pref button, .pref-k, .contact .label { color: var(--cfg); }
+  .pref :is(button, a), .pref-k, .contact .label { color: var(--cfg); }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { --muted: #b5b5b5; --line: #5a5a5a; }
@@ -310,7 +311,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, section[tabindex="-1"]:focus {
    the indicator falls back to plain links, and controls that need scripting are not shown. */
 .js #case:not(.open) { display: none; }
 html:not(.js) #case { border-block-start: 1px solid var(--line); }
-html:not(.js) .pref, html:not(.js) #copy, html:not(.js) .crumbs { display: none; }
+html:not(.js) .pref:not(.lang), html:not(.js) #copy, html:not(.js) .crumbs { display: none; }
 html:not(.js) .chapter-name { display: none; }
 
 /* Craft */

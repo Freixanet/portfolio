@@ -6,7 +6,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREFIX = "/portfolio"
 PUBLISHED = {"index.html", "404.html", "styles.css", "app.js", "robots.txt", "sitemap.xml", "favicon.svg",
              "apple-touch-icon.png", "og.png", ".nojekyll"}
-PUBLISHED_DIRS = ("img/", "fonts/", "vendor/")
+PUBLISHED_DIRS = ("img/", "fonts/", "vendor/", "ca/", "en/")
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
@@ -18,7 +18,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if path == PREFIX:
             self.send_response(301); self.send_header("Location", PREFIX + "/"); self.end_headers(); return None
         rel = path[len(PREFIX) + 1:] if path.startswith(PREFIX + "/") else None
-        if rel == "": rel = "index.html"
+        if rel in ("ca", "en"):
+            self.send_response(301); self.send_header("Location", path + "/"); self.end_headers(); return None
+        if rel is not None and (rel == "" or rel.endswith("/")): rel += "index.html"
         if rel is None or not (rel in PUBLISHED or rel.startswith(PUBLISHED_DIRS)) or not os.path.isfile(os.path.join(ROOT, rel)):
             body = open(os.path.join(ROOT, "404.html"), "rb").read()
             self.send_response(404); self.send_header("Content-Type", "text/html; charset=utf-8")

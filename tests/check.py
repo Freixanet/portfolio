@@ -35,17 +35,21 @@ def local(url):
 def exists(url, base="/portfolio/"):
     path = urlsplit(url).path
     if path.startswith(base): path = path[len(base):]
-    return os.path.exists(os.path.join(ROOT, path.lstrip("/"))) if path not in ("", "/") else True
+    path = path.lstrip("/")
+    if path in ("", ".", "./"): return True
+    if path.endswith("/"): path += "index.html"
+    return os.path.exists(os.path.join(ROOT, path)) or os.path.exists(os.path.join(ROOT, path, "index.html"))
 
 # 1. Every file the pages ask for exists, and nothing is loaded from another site
-for name in ("index.html", "404.html"):
+for name in ("index.html", "ca/index.html", "en/index.html", "404.html"):
     page = parse(name)
     for tag, a in page.tags:
         refs = [a[k] for k in ("src", "href") if a.get(k)]
         refs += [part.strip().split(" ")[0] for k in ("srcset",) if a.get(k) for part in a[k].split(",")]
         for r in refs:
             if local(r) or r.startswith("/portfolio/"):
-                check(exists(r), f"{name}: missing file {r}")
+                target = r if r.startswith("/") else os.path.normpath(os.path.join(os.path.dirname(name), urlsplit(r).path)) + ("/" if r.endswith("/") else "")
+                check(exists(target), f"{name}: missing file {r}")
             loads = tag in ("script", "img", "source") or (tag == "link" and a.get("rel") not in ("canonical", "alternate"))
             if loads and urlsplit(r).netloc:
                 check(False, f"{name}: <{tag}> loads from another site: {r}")
@@ -101,8 +105,13 @@ for name, t in (("light", light), ("dark", dark)):
     check(ratio(t["giant"], t["bg"]) >= 3, f"{name}: large text contrast {ratio(t['giant'], t['bg']):.2f}")
 
 # 5. Search engines and sharing
-for needle in ('rel="canonical"', 'property="og:image"', 'hreflang="en"', 'hreflang="ca"', 'name="description"', 'rel="icon"'):
-    check(needle in html_text, f"index.html: missing {needle}")
+for page, lang in (("index.html", "es"), ("ca/index.html", "ca"), ("en/index.html", "en")):
+    text = read(page)
+    for needle in ('rel="canonical"', 'property="og:image"', 'hreflang="es"', 'hreflang="en"', 'hreflang="ca"', 'hreflang="x-default"', 'name="description"', 'rel="icon"', f'<html lang="{lang}">'):
+        check(needle in text, f"{page}: missing {needle}")
+    canon = re.search(r'rel="canonical" href="([^"]+)"', text)
+    check(canon and canon.group(1).endswith("/portfolio/" + ("" if lang == "es" else lang + "/")), f"{page}: canonical points elsewhere")
+    check(f'aria-current="page">' in text, f"{page}: the current language is not marked")
 check(re.search(r"<title>[^<]+</title>", html_text), "index.html: no <title>")
 check("noindex" in read("404.html"), "404.html should not be indexed")
 check("Sitemap:" in read("robots.txt"), "robots.txt: no sitemap")
