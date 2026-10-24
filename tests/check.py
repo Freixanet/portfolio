@@ -85,6 +85,17 @@ if m:
     for es, tr in json.loads(m.group(1)).items():
         check(tr.get("ca") and tr.get("en"), f"missing translation: {es[:50]}")
 
+# The visitor must be able to evaluate the work and contact its author.
+for name in ("index.html", "ca/index.html", "en/index.html"):
+    content = read(name)
+    for placeholder in ("hola@tudominio.com", "https://www.linkedin.com/", "Hueco:", "Espai reservat:", "Placeholder:"):
+        check(placeholder not in content, f"{name}: unfinished public content: {placeholder}")
+    page = parse(name)
+    hrefs = {a.get("href") for tag, a in page.tags if tag == "a"}
+    check("mailto:mfreixanet@icloud.com" in hrefs, f"{name}: no working email action")
+    for repo in ("lexia-legal-ai", "enyarte", "adhd-action-maps"):
+        check(f"https://github.com/Freixanet/{repo}" in hrefs, f"{name}: project has no source link: {repo}")
+
 # 4. Colour contrast of the text tokens, light and dark (WCAG AA: 4.5:1 for body text)
 css = read("styles.css")
 def lum(hexc):

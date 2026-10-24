@@ -162,6 +162,7 @@ a.project:active .frame { transform: scale(.98); transition-duration: .12s; }
 .row-p { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); row-gap: var(--s2); align-items: baseline; padding-block: var(--s5); border-top: 1px solid var(--line); }
 .row-p:last-of-type { border-bottom: 1px solid var(--line); }
 .row-p h4 { grid-column: 1 / 7; font-family: var(--display); font-size: clamp(2rem, 3.4vw, 2.75rem); line-height: 1; letter-spacing: -.025em; }
+.row-p h4 a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .14em; }
 .row-p p { grid-column: 7 / 11; color: var(--muted); }
 .row-p .label { grid-column: 11 / 13; justify-self: end; text-align: end; }
 .index-note { margin-top: var(--s5); }
@@ -347,13 +348,13 @@ html:not(.js) .chapter-name { display: none; }
 .facts { display: grid; }
 .facts div { display: grid; grid-template-columns: 8em minmax(0, 1fr); gap: var(--s4); padding-block: var(--s4); border-bottom: 1px solid var(--line); align-items: baseline; }
 .facts div:first-child { border-top: 1px solid var(--line); }
-.slot { color: var(--muted); border: 1px dashed var(--muted); border-radius: var(--r-md); padding: var(--s4) var(--s5); margin-bottom: var(--s7); }
+.slot { color: var(--muted); margin-bottom: var(--s7); }
 
 /* Contact */
 
 .contact h2 em { color: var(--muted); display: block; }
 .contact .actions { display: flex; flex-wrap: wrap; gap: var(--s3); align-self: end; }
-.mail { height: 44px; display: inline-flex; align-items: center; padding-inline: 20px; border-radius: 999px; background: var(--surface); font-family: var(--mono); font-size: var(--t-small); user-select: all; }
+.mail { min-height: 44px; max-width: 100%; min-width: 0; display: inline-flex; align-items: center; padding: 10px 20px; overflow-wrap: anywhere; border-radius: 999px; background: var(--surface); font-family: var(--mono); font-size: var(--t-small); user-select: all; }
 footer { margin-top: var(--s9); padding-top: var(--s5); border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: var(--s4); }
 
 /* ——— Case view ——— */

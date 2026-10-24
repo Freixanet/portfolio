@@ -1,6 +1,6 @@
 # Quality
 
-How this portfolio is held to the design and development constitution: what it is for, where it must work, what counts as done, and the evidence. Last reviewed 5 October 2026.
+How this portfolio is held to the design and development constitution: what it is for, where it must work, what counts as done, and the evidence. Content and contact path reviewed 24 October 2026; the dated measurements below retain their original dates.
 
 ## Brief
 
@@ -38,6 +38,7 @@ How this portfolio is held to the design and development constitution: what it i
 | PRIV-01 | Nothing is requested from another site | P1 | `journeys`: nothing is requested…; `tests/check.py` section 1 |
 | PERF-01 | First visit within budget: index ≤ 40 KB, CSS ≤ 50 KB, JS ≤ 60 KB, font ≤ 40 KB; LCP ≤ 2.5 s, CLS ≤ 0.1 | P1 | `tests/check.py` section 6; Lighthouse report in CI (measured 1.27 s LCP, CLS 0 on 5 Oct 2026, lab) |
 | SEC-01 | Content-Security-Policy on every page; vendored code matches its reviewed hash | P1 | `tests/check.py` sections 1 and 7 |
+| CONTENT-01 | Contact opens the real email address; public text has no editing placeholders and secondary projects link to their source | P1 | `tests/check.py`: visitor content checks |
 | BUILD-01 | The published files are exactly what the source builds | P0 | CI step «The committed site matches its source» |
 
 ## Still checked by hand
@@ -57,7 +58,7 @@ Still to do, and what each one needs:
 | §19 field data (real-user LCP, INP, CLS) | Measuring real users needs analytics, which would add a third party and tracking | Lab measurements and Lighthouse on every push | When a privacy-friendly, self-hosted measure is worth it |
 | §17 «no scroll hijacking» | Lenis smooths the wheel on desktop with a fine pointer | Off for touch and reduced motion; native scrolling everywhere else | Open decision: soften or remove |
 | Lighthouse never blocks publishing | Lab scores vary between runs on shared CI machines | Kept as a report; budgets and axe do block | — |
-| Placeholders visible (email, LinkedIn, «Sobre mí», video demo) | Real content still to come from Marc | Listed here | Before sharing the link |
+| Real iPhone recording | The Alice case currently uses interface imagery, not a recorded end-to-end run | The action opens the case without promising a video | Add a recording after capturing and reviewing it |
 
 ## Definition of Done for a change
 

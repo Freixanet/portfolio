@@ -156,9 +156,10 @@ test('text at 200% on a phone and a laptop: nothing pushes the page sideways (WC
   }
 });
 
-test('nothing is requested from other sites', async ({ page }) => {
+test('nothing is requested from other sites', async ({ page, baseURL }) => {
   const outside = [];
-  page.on('request', (r) => { if (!r.url().startsWith('http://127.0.0.1:4173/')) outside.push(r.url()); });
+  const localOrigin = new URL(baseURL).origin + '/';
+  page.on('request', (r) => { if (!r.url().startsWith(localOrigin)) outside.push(r.url()); });
   await page.goto('./');
   await page.locator('a.project.feature').click();
   await expect(page.locator('#case')).toBeVisible();
