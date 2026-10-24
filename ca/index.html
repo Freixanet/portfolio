@@ -62,12 +62,12 @@
       <div class="marker over-layer" data-r="rule">
         <span class="num">I</span>
         <h2>Feina</h2>
-        <p class="aside">Cinc projectes. El primer el faig servir cada dia.<sup><a href="#nota-1" class="fn">1</a></sup></p>
+        <p class="aside">Quatre projectes. El primer el faig servir cada dia.<sup><a href="#nota-1" class="fn">1</a></sup></p>
       </div>
 
       <a class="project feature" href="#alice">
         <div class="frame shots cine" data-expand data-lag=".12">
-          <span class="play" aria-hidden="true"><span class="play-label">Demo en vídeo, pendent</span><i><svg width="10" height="12" viewBox="0 0 10 12"><path d="M1 1.2v9.6c0 .6.6.9 1.1.6l7.4-4.8c.5-.3.5-.9 0-1.2L2.1.6C1.6.3 1 .6 1 1.2Z" fill="currentColor"/></svg></i></span>
+          <span class="play" aria-hidden="true"><span class="play-label">Explora Alice</span><i>↗</i></span>
           <picture><source type="image/avif" srcset="../img/chat-320.avif 320w, ../img/chat-560.avif 560w, ../img/chat-840.avif 840w" sizes="(width < 54rem) 36vw, 260px"><source type="image/webp" srcset="../img/chat-320.webp 320w, ../img/chat-560.webp 560w, ../img/chat-840.webp 840w" sizes="(width < 54rem) 36vw, 260px"><img class="par" data-speed="10" src="../img/chat-560.webp" width="560" height="1217" alt="Alice: inici del xat" loading="lazy" decoding="async"></picture>
           <picture><source type="image/avif" srcset="../img/nav-320.avif 320w, ../img/nav-560.avif 560w, ../img/nav-840.avif 840w" sizes="(width < 54rem) 36vw, 260px"><source type="image/webp" srcset="../img/nav-320.webp 320w, ../img/nav-560.webp 560w, ../img/nav-840.webp 840w" sizes="(width < 54rem) 36vw, 260px"><img class="par" data-speed="18" src="../img/nav-560.webp" width="560" height="1217" alt="Alice: menú lateral" loading="lazy" decoding="async"></picture>
         </div>
@@ -83,26 +83,20 @@
       <div class="index over-layer">
         <h3 class="index-title">Més projectes</h3>
         <div class="row-p">
-          <h4>Lexia</h4>
-          <p>Xat legal per a Espanya que treu les teves dades personals del text al navegador, abans d’enviar-lo.</p>
+          <h4><a href="https://github.com/Freixanet/lexia-legal-ai">Lexia</a></h4>
+          <p>Xat legal per a Espanya amb ocultació de patrons d’identificació al navegador i respostes en streaming.</p>
           <span class="label">Web amb IA</span>
         </div>
         <div class="row-p">
-          <h4>Claridad</h4>
-          <p>Un escàner de documents pensat per sentir-se tranquil. Prototip amb cada decisió documentada.</p>
-          <span class="label">App d’iPhone</span>
-        </div>
-        <div class="row-p">
-          <h4>Enyarte</h4>
+          <h4><a href="https://github.com/Freixanet/enyarte">Enyarte</a></h4>
           <p>La web d’una pintora: un catàleg per vendre obra i un mode que explica la seva història, en dos idiomes.</p>
           <span class="label">Web per a un client</span>
         </div>
         <div class="row-p">
-          <h4>Action Maps</h4>
+          <h4><a href="https://github.com/Freixanet/adhd-action-maps">Action Maps</a></h4>
           <p>Converteix notes, vídeos de YouTube o PDF en una idea central i uns quants passos amb temps.</p>
           <span class="label">App mòbil amb IA</span>
         </div>
-        <p class="index-note"><span class="pill">casos en preparació</span></p>
       </div>
     </section>
 
@@ -129,7 +123,7 @@
               <span class="cursor"></span>
               <div class="composer">Habla con Alice…</div>
             </div></div></div></div></div></div></div>
-        <div class="tile"><div class="text"><h3>Anonimitzar abans d’enviar</h3><span class="label">Lexia</span></div><div class="frame code" data-r="frame"><pre><code>const DOC_PLACEHOLDER = &#x27;[documento]&#x27;;
+        <div class="tile"><div class="text"><h3>Ocultar abans d’enviar</h3><span class="label">Lexia</span></div><div class="frame code" data-r="frame"><pre><code>const DOC_PLACEHOLDER = &#x27;[documento]&#x27;;
 
 <span class="c">/** Patrones que revelan un DNI/NIF. */</span>
 const DOC_PATTERNS = [
@@ -173,7 +167,7 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
       </div>
       <div class="grid12">
       <div class="right">
-        <p class="slot">Espai reservat: dues o tres frases teves. Què et mou, com treballes i quin equip busques.</p>
+        <p class="slot">Connecto disseny i enginyeria per portar una idea des de la interfície fins al servidor. Treballo amb Swift, TypeScript i Python; m’interessen els productes que converteixen tasques complexes en experiències clares.</p>
         <dl class="facts">
           <div><dt class="label">Llenguatges</dt><dd>Swift, TypeScript, Python</dd></div>
           <div><dt class="label">Faig</dt><dd>Apps d’iPhone, webs, servidors i agents</dd></div>
@@ -192,10 +186,9 @@ text.replace(DOC_PATTERNS[0], DOC_PLACEHOLDER);</code></pre><span class="file">s
       <div class="grid12" style="row-gap:var(--s7)">
         <p class="contact-big left">Fem alguna cosa junts?</p>
         <div class="right actions">
-          <span class="mail" id="mail">hola@tudominio.com</span>
+          <a class="mail" id="mail" href="mailto:mfreixanet@icloud.com">mfreixanet@icloud.com</a>
           <button class="btn" id="copy" type="button">Copia</button>
           <a class="btn" href="https://github.com/Freixanet">GitHub</a>
-          <a class="btn" href="https://www.linkedin.com/">LinkedIn</a>
         </div>
       </div>
       <footer class="label foot">
